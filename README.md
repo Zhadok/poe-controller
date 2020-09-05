@@ -19,10 +19,7 @@ java -D"java.library.path"="./poe-controller-files/lib" -jar target/poe-controll
 
 
 # License
-
-TBD
-
+Apache License Version 2.0
 
 # Open source software
-
 - [JInput](https://jinput.github.io/jinput/): Copyright 2019 jinput
