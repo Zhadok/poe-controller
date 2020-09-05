@@ -8,7 +8,6 @@ import org.zhadok.poe.controller.action.ActionHandlerMouse;
 import org.zhadok.poe.controller.config.ConfigManager;
 import org.zhadok.poe.controller.config.pojo.ConfigAction;
 import org.zhadok.poe.controller.config.pojo.ConfigCharacterMovement;
-import org.zhadok.poe.controller.config.pojo.ConfigContainer;
 import org.zhadok.poe.controller.config.pojo.ConfigMacro;
 import org.zhadok.poe.controller.util.Point;
 import org.zhadok.poe.controller.util.Util;

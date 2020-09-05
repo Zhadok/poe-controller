@@ -1,7 +1,10 @@
 package org.zhadok.poe.controller;
 import java.awt.AWTException;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.zhadok.poe.controller.config.ui.ConfigMappingUI;
 import org.zhadok.poe.controller.lib.JInputLib;
 import org.zhadok.poe.controller.util.Loggable;
 import org.zhadok.poe.controller.util.Util;
@@ -21,20 +24,35 @@ import net.java.games.input.EventQueue;
  */
 public class App implements Loggable {
 
-	public static int verbosity = 1; 
+	public static int verbosity = Constants.DEFAULT_VERBOSITY; 
 	public int getVerbosity() {
 		return verbosity; 
 	}
 	
-	private ControllerSettings settings; 
 	private boolean running = true;
 	
-	private ControllerMapping controllerMapping; 
+	private List<ControllerEventListener> controllerEventListeners = new ArrayList<>(); 
+	private ControllerEventListener nextEventListener = null; 	
 	
-	public App() throws AWTException {
-		this.controllerMapping = ControllerMapping.getInstance(); 
-		this.settings = controllerMapping.settings; 
+	public App() {}
+	
+	public void registerEventListener(ControllerEventListener listener) {
+		this.controllerEventListeners.add(listener);
 	}
+
+	/**
+	 * For the next event, only this listener will be called
+	 * @param listener
+	 */
+	public void registerForNextEvent(ControllerEventListener listener) {
+		this.nextEventListener = listener; 
+	}	
+	
+	
+	public void notifyControllerEventListeners(Event event) {
+		controllerEventListeners.forEach((listener) -> listener.handleEvent(event));
+	}
+	
 	
 	private void startPolling() {
 		log(1, "Started polling for controller changes"); 
@@ -45,13 +63,6 @@ public class App implements Loggable {
 			if (controllers.length == 0) {
 				System.out.println("Found no controllers.");
 				System.exit(0);
-			}
-			if (controllers.length > 1) {
-				//System.out.println("Found " + controllers.length + " controllers");
-			
-				/*for (Controller controller : controllers) {
-					System.out.println(controller.getName());
-				}*/
 			}
 
 			for (int i = 0; i < controllers.length; i++) {
@@ -77,7 +88,7 @@ public class App implements Loggable {
 			 * thrash the system.
 			 */
 			try {
-				Thread.sleep(settings.POLL_CONTROLLER_INTERVAL_MS);
+				Thread.sleep(20);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -86,7 +97,6 @@ public class App implements Loggable {
 	
 	private long lastEventTimestamp = -1; 
 	private void handleEvent(Event event) {
-
 		if (getVerbosity() >= 3) {
 			StringBuffer buffer = new StringBuffer();
 			//buffer.append(event.getNanos()).append(", ");
@@ -118,8 +128,31 @@ public class App implements Loggable {
 			System.out.println(buffer.toString());
 		}
 		
-		controllerMapping.handleEvent(event);
+		if (this.nextEventListener != null) {
+			// If a single event listener is registered for next event (e.g. UI)
+			// Only notify that listener
+			this.nextEventListener.handleEvent(event);
+			this.nextEventListener = null; 
+		} else {
+			this.notifyControllerEventListeners(event); 
+		}
 	}
+	
+	private ConfigMappingUI startConfigMappingUI() {
+		App app = this; 
+		ConfigMappingUI window = new ConfigMappingUI(app);
+		java.awt.EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					window.initialize(); 
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+		return window; 
+	}
+	
 	
 	/**
 	 * @param args
@@ -140,8 +173,14 @@ public class App implements Loggable {
 		String version = Runtime.class.getPackage().getImplementationVersion();
 		System.out.println("Running with Java version=" + version);
 		App app = new App();
+		app.registerEventListener(new ControllerMapping());
+		ConfigMappingUI window = app.startConfigMappingUI(); 
+		app.registerEventListener(window);
+		
 		app.startPolling(); 
 	}
+	
+	
 	
 	
 	

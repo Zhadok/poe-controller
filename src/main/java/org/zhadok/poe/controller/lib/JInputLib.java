@@ -2,8 +2,6 @@ package org.zhadok.poe.controller.lib;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
 
 import org.zhadok.poe.controller.App;
 import org.zhadok.poe.controller.Constants;

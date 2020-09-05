@@ -14,7 +14,7 @@ import net.java.games.input.Component;
 import net.java.games.input.Event;
 
 
-public class ControllerMapping implements Loggable {
+public class ControllerMapping implements Loggable, ControllerEventListener {
 	
 	public int getVerbosity() {
 		return App.verbosity;
@@ -28,9 +28,7 @@ public class ControllerMapping implements Loggable {
 	public final ActionHandlerMouse actionHandlerMouse; 
 	public final ActionHandlerMacro actionHandlerMacro; 
 	
-	private static ControllerMapping instance; 
-	
-	private ControllerMapping() {
+	public ControllerMapping() {
 		log(1, "Initializing ControllerMapping...");
 		try {
 			this.robot = new Robot();
@@ -52,14 +50,8 @@ public class ControllerMapping implements Loggable {
 		//TradeUI.launchAsNewJavaFX();
 	}
 
-	public static ControllerMapping getInstance() {
-		if (instance == null) {
-			instance = new ControllerMapping(); 
-		}
-		return instance; 
-	}
-	
 	public void handleEvent(Event event) {
+		
 		Component comp = event.getComponent(); 
 
 		// Hat switch = left group of 4 buttons, all share name. Only value is different (0.25, 0.5, 0.75, 1.0)
@@ -68,21 +60,16 @@ public class ControllerMapping implements Loggable {
 				comp.getName(); 
 		log(3, "ComponentName: " + componentName);
 		
-		switch (comp.getName()) {
-		
-		default: 
-			Mapping mapping = settings.getMapping(componentName); 
-			if (mapping != null) {
-				this.handleEvent(event, mapping.getAction());
-			}
-			else {
-				//log(1, "Unknown component name: " + componentName); 
-			}
-			break; 
+		Mapping mapping = settings.getMapping(componentName); 
+		if (mapping != null) {
+			this.handleEvent(event, mapping.getAction());
+		}
+		else {
+			//log(1, "Unknown component name: " + componentName); 
 		}
 	}
 
-	public void handleEvent(Event event, ConfigAction action) {
+	private void handleEvent(Event event, ConfigAction action) {
 		if (action == null) {
 			return;
 		}

@@ -6,7 +6,6 @@ import org.zhadok.poe.controller.App;
 import org.zhadok.poe.controller.action.ActionHandlerMacro;
 import org.zhadok.poe.controller.config.ConfigManager;
 import org.zhadok.poe.controller.config.pojo.Config;
-import org.zhadok.poe.controller.config.pojo.ConfigContainer;
 import org.zhadok.poe.controller.config.pojo.ConfigMacro;
 import org.zhadok.poe.controller.util.Loggable;
 
