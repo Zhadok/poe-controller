@@ -24,9 +24,9 @@ jobs:
       run: mvn -B clean package
     
     # https://docs.github.com/en/actions/language-and-framework-guides/building-and-testing-java-with-maven#packaging-workflow-data-as-artifacts
-    - name: Upload Maven artifacts
+    - name: Copy Maven artifacts
       run: mkdir staging && cp target/*.zip staging && cp target/*.jar staging
-      uses: actions/upload-artifact@v2
+    - uses: actions/upload-artifact@v2
       with:
         name: Package
         path: staging
