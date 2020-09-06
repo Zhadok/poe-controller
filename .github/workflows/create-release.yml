@@ -13,14 +13,42 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+      - name: Build project 
+        run: |
+          mvn -B clean package
+      
+      # Upload release artifact (the .zip file) manually
+      # https://github.com/actions/upload-release-asset/issues/47#issuecomment-659071145
+      - name: Create release and upload asset
+        uses: actions/github-script@v2
         with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
-          body: ""
-          draft: false
-          prerelease: true
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+            console.log('environment', process.versions);
+           
+            const { repo: { owner, repo }, sha } = context;
+            console.log({ owner, repo, sha });
+            
+            const release = await github.repos.createRelease({
+              owner, repo,
+              tag_name: process.env.GITHUB_REF,
+              draft: false,
+              prerelease: true, 
+              target_commitish: sha
+            });
+            
+            console.log('created release', { release });
+            
+            const fs = require('fs').promises;
+            const files = await fs.readdir("."); 
+            const zipFile = files.filter(fileName => fileName.includes(".zip"))[0]; 
+            console.log('Uploading file ', zipFile);
+            
+            await github.repos.uploadReleaseAsset({
+              owner, repo,
+              release_id: release.data.id,
+              name: zipFile,
+              data: await fs.readFile(`./${zipFile}`)
+            });            
+            
+
