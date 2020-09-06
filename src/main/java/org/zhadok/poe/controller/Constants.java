@@ -14,5 +14,7 @@ public class Constants {
 	public static final Path DIR_LIB = DIR_PROJECT.resolve("lib");
 
 	public static final Path FILE_SETTINGS = DIR_PROJECT.resolve("settings.json");
+	
+	public static final Path FILE_LOG = DIR_PROJECT.resolve("poe-controller.log"); 
 
 }

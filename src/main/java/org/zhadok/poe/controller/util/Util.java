@@ -16,6 +16,7 @@ import java.math.RoundingMode;
 import java.nio.file.Files;
 import java.text.DecimalFormat;
 import java.util.Arrays;
+import java.util.Objects;
 
 import org.zhadok.poe.controller.Constants;
 
@@ -94,6 +95,11 @@ public class Util {
 	public static void copyFileFromResource(String resourcePath, File fileOut) throws IOException {
 		InputStream resourceStream = Util.class.getResourceAsStream(resourcePath);
 		Files.copy(resourceStream, fileOut.toPath()); 		
+	}
+	
+	public static boolean runningFromJar() {
+		String protocol = Util.class.getResource("").getProtocol();
+		return "jar".equals(protocol);  
 	}
 
 }

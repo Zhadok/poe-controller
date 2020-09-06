@@ -1,9 +1,30 @@
 package org.zhadok.poe.controller.util;
 
+import java.io.BufferedOutputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
+import java.nio.file.Path;
+
+import org.joda.time.LocalDateTime;
 
 public interface Loggable {
 
 	int getVerbosity();
+	
+	/**
+	 * Write logs to system.out as well as to a file
+	 * @param fileLog
+	 */
+	static void writeLogsToFile(Path fileLog) {
+		try {
+			TeeOutputStream out = new TeeOutputStream(System.out, 
+					new PrintStream(new BufferedOutputStream(new FileOutputStream(fileLog.toString(), true)), true));
+			System.setOut(new PrintStream(out));
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+	}
 	
 	default void println(String message) {
 		System.out.println(message);
@@ -14,6 +35,7 @@ public interface Loggable {
 	}
 	
 	default void printMessage(String message, boolean insertNewLine) {
+		message = new StringBuilder(LocalDateTime.now().toString()).append(" ").append(message).toString(); 
 		if (insertNewLine == true) {
 			println(message);
 		}
@@ -66,5 +88,6 @@ public interface Loggable {
 	default void log(int minVerbosity, Object message) {
 		log(minVerbosity, message.toString());
 	}
+
 	
 }

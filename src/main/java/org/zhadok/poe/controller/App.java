@@ -207,17 +207,20 @@ public class App implements Loggable {
 		// We will set it here so that the development process within IDEs works		
 		System.setProperty("java.library.path", Constants.DIR_LIB.toString());
 		Util.ensureProjectDirExists(); 
+		Loggable.writeLogsToFile(Constants.FILE_LOG); 
 		
 		JInputLib lib = new JInputLib();
 		lib.prepare(); 
 		
-		String version = Runtime.class.getPackage().getImplementationVersion();
-		System.out.println("Running with Java version=" + version);
+		if (System.getProperty("verbosity") != null) {
+			App.verbosity = Integer.valueOf(System.getProperty("verbosity")); 
+			System.out.println("Setting verbosity to " + verbosity);
+		}
+		
 		App app = new App();
 		app.resetControllerMappingListener();
 		ConfigMappingUI window = app.startConfigMappingUI(); 
 		app.registerEventListener(window);
-		
 		app.startPolling(); 
 	}
 	
