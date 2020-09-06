@@ -24,10 +24,10 @@ jobs:
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
-            console.log('environment', process.versions);
+            console.log("Environment", process.versions);
            
             const { repo: { owner, repo }, sha } = context;
-            console.log({ owner, repo, sha });
+            console.log("Context", { owner, repo, sha });
             
             const release = await github.repos.createRelease({
               owner, repo,
@@ -37,10 +37,12 @@ jobs:
               target_commitish: sha
             });
             
-            console.log('created release', { release });
+            console.log("Created release", { release });
             
             const fs = require('fs').promises;
-            const files = await fs.readdir("."); 
+            const files = await fs.readdir("./target"); 
+            console.log("Found files in /target: " + files); 
+            
             const zipFile = files.filter(fileName => fileName.includes(".zip"))[0]; 
             console.log('Uploading file ', zipFile);
             
