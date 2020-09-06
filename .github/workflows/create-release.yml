@@ -58,13 +58,16 @@ jobs:
             const getContentLength = filePath => fsSync.statSync(filePath).size;
             const headers = { 'content-type': "application/zip", 'content-length': getContentLength(pathToZipFile) };
             
+            console.log("Using headers", headers); 
+            
             // Using this example
             // https://github.com/actions/upload-release-asset/blob/main/src/upload-release-asset.js
+            // Documented here: https://github.com/octokit/plugin-rest-endpoint-methods.js/blob/master/docs/repos/uploadReleaseAsset.md
             const uploadedReleaseAsset = await github.repos.uploadReleaseAsset({
               url: release.data.upload_url,
               headers,
               name: zipFile,
-              file: fsSync.readFileSync(pathToZipFile)
+              data: fsSync.readFileSync(pathToZipFile)
             });            
             
             console.log("Uploaded release asset", { uploadedReleaseAsset }); 
