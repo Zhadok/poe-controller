@@ -71,7 +71,6 @@ public class ActionHandlerMouse extends ActionHandler {
 	}
 	
 	
-	@SuppressWarnings("deprecation")
 	public void mouseLeftPress() {
 		if (this.isMouseLeftPressed == false && !this.isInterrupted()) {
 			this.isMouseLeftPressed = true;
@@ -79,7 +78,6 @@ public class ActionHandlerMouse extends ActionHandler {
 			log(2, "Mouse left press"); 
 		}
 	}
-	@SuppressWarnings("deprecation")
 	public void mouseLeftRelease() {
 		if (this.isMouseLeftPressed == true && !this.isInterrupted()) {
 			this.robot.mouseRelease(InputEvent.BUTTON1_MASK);
@@ -98,7 +96,6 @@ public class ActionHandlerMouse extends ActionHandler {
 	}
 	
 	
-	@SuppressWarnings("deprecation")
 	public void mouseRightClick() {
 		if (this.isInterrupted())
 			return; 
@@ -108,7 +105,6 @@ public class ActionHandlerMouse extends ActionHandler {
 		robot.mouseRelease(InputEvent.BUTTON3_MASK);
 	}
 	
-	@SuppressWarnings("deprecation")
 	public void mouseRightClick(Event event) {
 		if (this.isInterrupted())
 			return; 
@@ -123,7 +119,6 @@ public class ActionHandlerMouse extends ActionHandler {
 		}
 	}
 	
-	@SuppressWarnings("deprecation")
 	public void mouseRightPress() {
 		if (this.isMouseRightPressed == false && !this.isInterrupted()) {
 			this.isMouseRightPressed = true;
@@ -132,7 +127,6 @@ public class ActionHandlerMouse extends ActionHandler {
 		}
 	}
 	
-	@SuppressWarnings("deprecation")
 	public void mouseRightRelease() {
 		if (this.isMouseRightPressed == true && !this.isInterrupted()) {
 			this.isMouseRightPressed = false; 
@@ -148,7 +142,6 @@ public class ActionHandlerMouse extends ActionHandler {
 		this.mouseMiddleRelease(); 
 	}
 	
-	@SuppressWarnings("deprecation")
 	private void mouseMiddlePress() {
 		if (this.isMouseMiddlePressed == false && !this.isInterrupted()) {
 			this.isMouseMiddlePressed = true;
@@ -157,7 +150,6 @@ public class ActionHandlerMouse extends ActionHandler {
 		}
 	}
 	
-	@SuppressWarnings("deprecation")
 	private void mouseMiddleRelease() {
 		if (this.isMouseMiddlePressed == true && !this.isInterrupted()) {
 			this.isMouseMiddlePressed = false; 

@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.zhadok.poe.controller.action.macro.MacroName.MacroCharacterMovement;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -30,8 +31,8 @@ public class ConfigTest {
 	
 	private static Stream<Arguments> provideArgumentsForSanityCheckConfig() {
 	    return Stream.of(
-	    		Arguments.of(List.of("Button 1", "Button 2", "Button 3"), false),
-	    		Arguments.of(List.of("Button 1", "Button 1", "Button 3"), true)
+	    		Arguments.of(Arrays.asList("Button 1", "Button 2", "Button 3"), false),
+	    		Arguments.of(Arrays.asList("Button 1", "Button 1", "Button 3"), true)
 	      );
 	}
 	
