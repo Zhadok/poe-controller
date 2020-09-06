@@ -29,6 +29,8 @@ jobs:
             const { repo: { owner, repo }, sha } = context;
             console.log("Context", { owner, repo, sha });
             
+            console.log("tag_name", process.env.GITHUB_REF); 
+            
             const release = await github.repos.createRelease({
               owner, repo,
               tag_name: process.env.GITHUB_REF,
@@ -39,18 +41,28 @@ jobs:
             
             console.log("Created release", { release });
             
-            const fs = require('fs').promises;
-            const files = await fs.readdir("./target"); 
+            const fsAsync = require('fs').promises;
+            const fsSync = require("fs"); 
+            
+            const files = await fsAsync.readdir("./target"); 
             console.log("Found files in /target: " + files); 
             
             const zipFile = files.filter(fileName => fileName.includes(".zip"))[0]; 
-            console.log('Uploading file ', zipFile);
+            const pathToZipFile = "./target/" + zipFile; 
+            console.log('Uploading file ', pathToZipFile);
             
-            await github.repos.uploadReleaseAsset({
-              owner, repo,
-              release_id: release.data.id,
+            // Determine content-length for header to upload asset
+            const contentLength = pathToZipFile => fsSync.statSync(pathToZipFile).size;
+            const headers = { 'content-type': "application/zip", 'content-length': contentLength(assetPath) };
+            
+            # Using this example
+            # https://github.com/actions/upload-release-asset/blob/main/src/upload-release-asset.js
+            const uploadedReleaseAsset = await github.repos.uploadReleaseAsset({
+              url: release.data.upload_url,
+              headers,               
               name: zipFile,
-              data: await fs.readFile(`./target/${zipFile}`)
+              file: fsSync.readFileSync(pathToZipFile)
             });            
             
+            console.log("Uploaded release asset", { uploadedReleaseAsset }); 
 
