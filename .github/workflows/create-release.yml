@@ -50,7 +50,7 @@ jobs:
               owner, repo,
               release_id: release.data.id,
               name: zipFile,
-              data: await fs.readFile(`./${zipFile}`)
+              data: await fs.readFile(`./target/${zipFile}`)
             });            
             
 
