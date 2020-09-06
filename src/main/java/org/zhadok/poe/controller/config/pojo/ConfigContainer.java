@@ -11,6 +11,10 @@ public class ConfigContainer {
 		return configs; 
 	}
 	
+	public void setConfigs(Config[] configs) {
+		this.configs = configs; 
+	}
+	
 	@Override
 	public String toString() {
 		String result = Util.stringJoin("\n", this.getConfigs()); 

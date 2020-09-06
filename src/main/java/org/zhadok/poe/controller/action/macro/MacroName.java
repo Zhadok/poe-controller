@@ -5,12 +5,6 @@ public enum MacroName {
 	MacroCharacterMovement,
 	MacroMouseMovement,
 	
-	MacroOpenRadialButtonMenu,
-	MacroCloseRadialButtonMenu, 
-	MacroRadialButtonMenuClickSelected, 
-	MacroCleanPopups,
-	
-	MacroCancelMacro,
 	MacroExitProgram
 
 }

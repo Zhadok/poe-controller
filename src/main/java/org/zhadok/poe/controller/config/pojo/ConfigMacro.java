@@ -26,6 +26,13 @@ public class ConfigMacro {
 			return null; 
 		return this.parameters.get(parameterName);
 	}
+
+	public void setParameter(String parameterName, Object value) {
+		if (this.parameters == null) {
+			this.parameters = new HashMap<>(); 
+		}
+		this.parameters.put(parameterName, value); 
+	}
 	
 	@Override
 	public String toString() {
@@ -35,7 +42,7 @@ public class ConfigMacro {
 	public MacroName getName() {
 		return name;
 	}
-
+	
 	public void setName(MacroName name) {
 		this.name = name;
 	}

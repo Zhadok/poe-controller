@@ -9,6 +9,11 @@ public class ConfigMouseMovement {
 	public double getMouseMoveSensitivity() {
 		return this.mouseMoveSensitivity;
 	}
+	
+	public void setMouseMoveSensitivity(double value) {
+		this.mouseMoveSensitivity = value; 
+	}
+
 
 	public int getPollRightStickIntervalMS() {
 		return pollRightStickIntervalMS;

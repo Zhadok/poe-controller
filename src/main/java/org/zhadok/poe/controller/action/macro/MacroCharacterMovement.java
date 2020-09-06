@@ -38,7 +38,7 @@ public class MacroCharacterMovement extends Macro {
 	public MacroCharacterMovement(ConfigMacro macro, Robot robot) {
 		super(macro, robot);
 		
-		this.settings = ConfigManager.getInstance().getConfig().getCharacterMovement();
+		this.settings = ConfigManager.getInstance().getLoadedConfig().getCharacterMovement();
 		
 		this.pointCharacterCenter = getPointCharacterCenter(settings); 
 		this.maxMouseDistanceToCenter_CharacterMovement = getMaxMouseDistanceToCenter(settings);

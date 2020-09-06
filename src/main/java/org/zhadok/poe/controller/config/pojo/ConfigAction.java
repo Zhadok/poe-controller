@@ -19,7 +19,7 @@ public class ConfigAction {
 	/**
 	 * Used for mouse actions (left click, left press, left release)
 	 */
-	private MouseAction mouse; 
+	private MouseAction mouseAction; 
 	
 	/**
 	 * Used for more complex actions (character movement, mouse movement)
@@ -40,10 +40,10 @@ public class ConfigAction {
 	}
 	
 	public MouseAction getMouseAction() {
-		return this.mouse; 
+		return this.mouseAction; 
 	}
 	public boolean hasMouseAction() {
-		return this.mouse != null; 
+		return this.mouseAction != null; 
 	}
 	
 	public ConfigMacro getMacro() {
@@ -68,23 +68,20 @@ public class ConfigAction {
 	
 	@JsonCreator
 	public ConfigAction(@JsonProperty("key") String targetKey,
-			@JsonProperty("mouse") MouseAction mouse, 
+			@JsonProperty("mouseAction") MouseAction mouseAction, 
 			@JsonProperty("macro") ConfigMacro macro, 
 			@JsonProperty("description") String description) {
 		this.key = targetKey; 
-		this.mouse = mouse; 
+		this.mouseAction = mouseAction; 
 		this.macro = macro; 
 		this.description = description; 
 		
-		
 		int nParams = (targetKey==null ? 0 : 1) + 
-				(mouse==null ? 0 : 1) + 
+				(mouseAction==null ? 0 : 1) + 
 				(macro==null ? 0 : 1); 
 		if (nParams != 1) {
 			throw new RuntimeException("Please pass exactly one of key, mouse or macro (description='" + this.description + "'), nParams=" + nParams); 
 		}
-		
-		
 		
 		if (targetKey != null) {
 			try {
@@ -94,7 +91,6 @@ public class ConfigAction {
 				throw new RuntimeException("No key event code found for key='" + this.key + "' and description='" + this.description + "'"); 
 			}
 		}
-	
 	}
 	
 	public int mapStringToKeyEventCode(String key) throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException {
@@ -105,6 +101,18 @@ public class ConfigAction {
 		return result; 
 	}
 	
+	public static String mapKeyEventCodeToString(int keyEventCode)  {
+		for (Field field : KeyEvent.class.getFields()) {
+			try {
+				if (keyEventCode == field.getInt(null)) {
+					return field.getName().replace("VK_", ""); 
+				}
+			} catch (IllegalArgumentException | IllegalAccessException e) {
+				e.printStackTrace();
+			}
+		}
+		return null; 
+	}
 	
 	
 	@Override
@@ -119,6 +127,18 @@ public class ConfigAction {
 			return this.getMacro().toString(); 
 		}
 		
+	}
+	
+	public String toStringUI() {
+		if (this.hasKey()) {
+			return this.key; 
+		}
+		else if (this.hasMouseAction()) {
+			return this.getMouseAction().toString(); 
+		}
+		else {
+			return this.getMacro().toString(); 
+		}
 	}
 	
 }

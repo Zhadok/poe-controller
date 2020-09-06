@@ -8,6 +8,8 @@ public enum MouseAction {
 	
 	RIGHT_CLICK,
 	RIGHT_PRESS,
-	RIGHT_RELEASE
+	RIGHT_RELEASE, 
+	
+	MIDDLE_CLICK
 	
 }

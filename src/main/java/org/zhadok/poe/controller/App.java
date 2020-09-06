@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.zhadok.poe.controller.action.macro.Macro;
 import org.zhadok.poe.controller.config.ui.ConfigMappingUI;
 import org.zhadok.poe.controller.lib.JInputLib;
 import org.zhadok.poe.controller.util.Loggable;
@@ -29,32 +30,57 @@ public class App implements Loggable {
 		return verbosity; 
 	}
 	
-	private boolean running = true;
+	private boolean running = false;
+	
+	/**
+	 * Poll interval (in milliseconds) for controller changes
+	 */
+	public final int POLL_CONTROLLER_INTERVAL_MS = 20; 
 	
 	private List<ControllerEventListener> controllerEventListeners = new ArrayList<>(); 
 	private ControllerEventListener nextEventListener = null; 	
+	private int nEventsToBeSkipped = 0; 
+	private int nEventsSingleListener = 0; 
 	
 	public App() {}
 	
 	public void registerEventListener(ControllerEventListener listener) {
 		this.controllerEventListeners.add(listener);
 	}
-
+	
 	/**
-	 * For the next event, only this listener will be called
+	 * Unregisters all listeners of instance ControllerMapping
+	 */
+	public void resetControllerMappingListener() {
+		this.controllerEventListeners.removeIf((listener) -> listener instanceof ControllerMapping); 
+		Macro.resetMacros();
+		this.registerEventListener(new ControllerMapping());
+	}
+	
+	/**
+	 * For the next n events, only this listener will be called
 	 * @param listener
 	 */
-	public void registerForNextEvent(ControllerEventListener listener) {
+	public void registerForNextEvents(int nEvents, ControllerEventListener listener) {
+		this.nEventsSingleListener = nEvents; 
 		this.nextEventListener = listener; 
 	}	
 	
+	public void setEventsToBeSkipped(int eventsToBeSkipped) {
+		this.nEventsToBeSkipped = eventsToBeSkipped; 
+	}
 	
 	public void notifyControllerEventListeners(Event event) {
 		controllerEventListeners.forEach((listener) -> listener.handleEvent(event));
 	}
 	
 	
-	private void startPolling() {
+	public void startPolling() {
+		if (this.running == true) {
+			return; 
+		}
+		
+		this.running = true;
 		log(1, "Started polling for controller changes"); 
 		while (running == true) {
 			/* Get the available controllers */
@@ -67,7 +93,7 @@ public class App implements Loggable {
 
 			for (int i = 0; i < controllers.length; i++) {
 				/* Remember to poll each one */
-
+				
 				if (controllers[i].poll()) {
 					/* Get the controllers event queue */
 					EventQueue queue = controllers[i].getEventQueue();
@@ -88,10 +114,17 @@ public class App implements Loggable {
 			 * thrash the system.
 			 */
 			try {
-				Thread.sleep(20);
+				Thread.sleep(POLL_CONTROLLER_INTERVAL_MS);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
+		}
+	}
+	
+	public void stopPolling() {
+		if (this.running == true) {
+			log(1, "Stopped polling for controller changes"); 
+			this.running = false;
 		}
 	}
 	
@@ -128,28 +161,36 @@ public class App implements Loggable {
 			System.out.println(buffer.toString());
 		}
 		
-		if (this.nextEventListener != null) {
+		if (nEventsToBeSkipped > 0) {
+			nEventsToBeSkipped--; 
+			return; 
+		}
+		
+		if (this.nextEventListener != null && nEventsSingleListener > 0) {
 			// If a single event listener is registered for next event (e.g. UI)
 			// Only notify that listener
 			this.nextEventListener.handleEvent(event);
-			this.nextEventListener = null; 
+			this.nEventsSingleListener--; 
+			
+			if (nEventsSingleListener == 0) {
+				this.nextEventListener = null; 
+			}
 		} else {
 			this.notifyControllerEventListeners(event); 
 		}
 	}
 	
 	private ConfigMappingUI startConfigMappingUI() {
-		App app = this; 
-		ConfigMappingUI window = new ConfigMappingUI(app);
-		java.awt.EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					window.initialize(); 
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
+		ConfigMappingUI window = new ConfigMappingUI(this);
+//		java.awt.EventQueue.invokeLater(new Runnable() {
+//			public void run() {
+//				try {
+//					//window.initialize(); 
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//				}
+//			}
+//		});
 		return window; 
 	}
 	
@@ -173,7 +214,7 @@ public class App implements Loggable {
 		String version = Runtime.class.getPackage().getImplementationVersion();
 		System.out.println("Running with Java version=" + version);
 		App app = new App();
-		app.registerEventListener(new ControllerMapping());
+		app.resetControllerMappingListener();
 		ConfigMappingUI window = app.startConfigMappingUI(); 
 		app.registerEventListener(window);
 		

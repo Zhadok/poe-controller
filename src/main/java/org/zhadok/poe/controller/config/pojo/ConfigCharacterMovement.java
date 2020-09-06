@@ -27,8 +27,16 @@ public class ConfigCharacterMovement {
 		return mouseOffsetCharacterToScreenCenterY;
 	}
 
+	public void setMouseOffsetCharacterToScreenCenterY(int number) {
+		this.mouseOffsetCharacterToScreenCenterY = number; 
+	}
+	
 	public double getMouseDistance_ScreenSizeMultiplier() {
 		return mouseDistance_ScreenSizeMultiplier;
+	}
+	
+	public void setMouseDistance_ScreenSizeMultiplier(double number) {
+		this.mouseDistance_ScreenSizeMultiplier = number; 
 	}
 
 	public double getStickThreshold() {

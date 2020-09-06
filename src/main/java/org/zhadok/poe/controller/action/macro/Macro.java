@@ -31,7 +31,7 @@ public abstract class Macro implements Loggable {
 	private static Thread currentMacroThread; 
 	
 	public Macro(ConfigMacro macro, Robot robot) {
-		this.config = ConfigManager.getInstance().getConfig(); 
+		this.config = ConfigManager.getInstance().getLoadedConfig(); 
 		this.macro = macro;
 		this.robot = robot;
 	}
@@ -82,14 +82,17 @@ public abstract class Macro implements Loggable {
 	
 	protected abstract void performMacro(Event event, ConfigMacro macro, ActionHandlerMacro actionHandlerMacro);
 	
+	public static void resetMacros() {
+		macroCharacterMovement = null; 
+		macroMouseMovement = null; 
+	}
+	
 	public static Macro buildMacro(ConfigMacro macro, Robot robot) {
 		if (App.verbosity >= 1) {
 			//System.out.println("Executing: " + macro.toString());
 		}
 		MacroName macroName = macro.getName();
 		switch(macroName) {
-		case MacroCancelMacro: 
-			return new MacroCancelMacro(macro, robot); 
 		case MacroExitProgram:
 			return new MacroExitProgram(macro, robot);
 		case MacroCharacterMovement:

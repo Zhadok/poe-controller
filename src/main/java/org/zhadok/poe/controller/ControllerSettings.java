@@ -11,10 +11,6 @@ import org.zhadok.poe.controller.util.Loggable;
 public class ControllerSettings implements Loggable {
 	
 	/**
-	 * Poll interval (in milliseconds) for controller changes
-	 */
-	public final int POLL_CONTROLLER_INTERVAL_MS = 20; 
-	/**
 	 * Poll interval (in ms) for right stick (mouse movement)
 	 */
 	
@@ -43,7 +39,7 @@ public class ControllerSettings implements Loggable {
 		
 		try {
 			log(1, "Loading config from file: " + Constants.FILE_SETTINGS);
-			Config config = ConfigManager.getInstance().getConfig(); 
+			Config config = ConfigManager.getInstance().getLoadedConfig(); 
 			
 			for (Mapping m : config.getMapping()) {
 				String componentName = m.getComponentName(); 

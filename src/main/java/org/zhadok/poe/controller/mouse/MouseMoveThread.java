@@ -33,7 +33,7 @@ public class MouseMoveThread implements Loggable, Runnable {
 		this.macroMouseMovement = macroMouseMovement;
 		this.robot = macroMouseMovement.getRobot(); 
 		
-		this.settings = ConfigManager.getInstance().getConfig().getMouseMovement();
+		this.settings = ConfigManager.getInstance().getLoadedConfig().getMouseMovement();
 	}
 
 	@Override

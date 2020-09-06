@@ -1,6 +1,7 @@
 package org.zhadok.poe.controller.config.pojo;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Mapping {
@@ -22,8 +23,16 @@ public class Mapping {
 		return this.buttonName;  
 	}
 	
+	public void setButtonName(String buttonName) {
+		this.buttonName = buttonName; 
+	}
+	
 	public Float getButtonValue() {
 		return this.buttonValue; 
+	}
+	
+	public void setButtonValue(Float buttonValue) {
+		this.buttonValue = buttonValue; 
 	}
 	
 	/**
@@ -33,8 +42,18 @@ public class Mapping {
 	 * Hat Switch - 0.25
 	 * @return
 	 */
+	@JsonIgnore
 	public String getComponentName() {
 		return getComponentName(this.getButtonName(), this.getButtonValue()); 
+	}
+	
+	@JsonIgnore
+	public String getInputStringUI() {
+		String result = getButtonName(); 
+		if (buttonValue != null) {
+			result += " (value=" + buttonValue + ")"; 
+		}
+		return result; 
 	}
 	
 	public static String getComponentName(String buttonName, Float buttonValue) {
@@ -49,15 +68,20 @@ public class Mapping {
 		return this.action; 
 	}
 	
-	public Mapping(String buttonName) {
-		this(buttonName, null, null, null); 
+	public void setAction(ConfigAction action) {
+		this.action = action; 
+	}
+	
+	
+	public Mapping() {
+		this(null, null, null, null); 
 	}
 	
 	@JsonCreator
 	public Mapping(@JsonProperty("buttonName") String buttonName, 
 			@JsonProperty("buttonValue") Float buttonValue, 
 			@JsonProperty("buttonDescription") String buttonDescription, 
-			@JsonProperty("actions") ConfigAction action) {
+			@JsonProperty("action") ConfigAction action) {
 		this.buttonName = buttonName; 
 		this.buttonValue = buttonValue; 
 		this.buttonDescription = buttonDescription; 
@@ -67,8 +91,11 @@ public class Mapping {
 	
 	@Override
 	public String toString() {
-		String actionsString = this.getAction().toString(); 
-		return this.getButtonName() + " (" + this.getButtonDescription() + "): " + actionsString; 
+		String actionsString = this.getAction() != null ? ": " + this.getAction().toString() : ""; 
+		return this.getButtonName() + " (" + this.getButtonDescription() + ")" + actionsString; 
 	}
+
+	
+
 	
 }
