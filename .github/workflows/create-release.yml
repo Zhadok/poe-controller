@@ -52,8 +52,8 @@ jobs:
             console.log('Uploading file ', pathToZipFile);
             
             // Determine content-length for header to upload asset
-            const contentLength = pathToZipFile => fsSync.statSync(pathToZipFile).size;
-            const headers = { 'content-type': "application/zip", 'content-length': contentLength(assetPath) };
+            const getContentLength = filePath => fsSync.statSync(filePath).size;
+            const headers = { 'content-type': "application/zip", 'content-length': getContentLength(pathToZipFile) };
             
             // Using this example
             // https://github.com/actions/upload-release-asset/blob/main/src/upload-release-asset.js
