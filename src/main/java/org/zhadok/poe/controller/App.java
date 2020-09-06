@@ -212,12 +212,11 @@ public class App implements Loggable {
 		JInputLib lib = new JInputLib();
 		lib.prepare(); 
 		
+		App app = new App();
 		if (System.getProperty("verbosity") != null) {
 			App.verbosity = Integer.valueOf(System.getProperty("verbosity")); 
-			System.out.println("Setting verbosity to " + verbosity);
+			app.log(0, "Setting verbosity to " + verbosity);
 		}
-		
-		App app = new App();
 		app.resetControllerMappingListener();
 		ConfigMappingUI window = app.startConfigMappingUI(); 
 		app.registerEventListener(window);

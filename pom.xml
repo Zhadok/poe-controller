@@ -72,13 +72,13 @@
 			<artifactId>joda-time</artifactId>
 			<version>2.10.6</version>
 		</dependency>
-		
-		 <dependency>
-	        <groupId>org.junit.jupiter</groupId>
+
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter</artifactId>
-	        <version>5.6.2</version>
-	        <scope>test</scope>
-	    </dependency>
+			<version>5.6.2</version>
+			<scope>test</scope>
+		</dependency>
 
 	</dependencies>
 
@@ -112,6 +112,7 @@
 				<version>2.22.2</version>
 			</plugin>
 			<plugin>
+				<!-- Produce the jar with dependencies -->
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-shade-plugin</artifactId>
 				<version>2.4.3</version>
@@ -134,6 +135,25 @@
 				<configuration>
 					<createDependencyReducedPom>false</createDependencyReducedPom>
 				</configuration>
+			</plugin>
+			<plugin>
+				<!-- Produce the zip including the jar with dependencies -->
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>2.5.5</version>
+				<configuration>
+					<appendAssemblyId>false</appendAssemblyId>
+					<descriptors>
+						<descriptor>pom-assembly.xml</descriptor>
+					</descriptors>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
