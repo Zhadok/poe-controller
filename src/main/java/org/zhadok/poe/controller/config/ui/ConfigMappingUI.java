@@ -1,11 +1,14 @@
 package org.zhadok.poe.controller.config.ui;
 
+import java.awt.AWTEvent;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.Toolkit;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -14,6 +17,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -96,7 +100,10 @@ public class ConfigMappingUI implements Loggable, ControllerEventListener {
 	private void initialize() {
 		frame = new JFrame();
 		frame.setTitle("poe-controller");
-
+		
+		URL iconUrl = getClass().getResource("/img/icon-console.png"); 
+		frame.setIconImage(new ImageIcon(iconUrl).getImage());
+		
 		int paddingY = 100;
 		int frameWidth = (int) (0.6 * Util.getScreenSize().width); 
 		int paddingX = (Util.getScreenSize().width - frameWidth) / 2; 
@@ -300,16 +307,22 @@ public class ConfigMappingUI implements Loggable, ControllerEventListener {
 		log(1, "Listening for next keyboard or mouse input...");
 		setStatusText("Listening for next keyboard input or mouse click...");
 		
-		NextOutputMappingHandler handler = new NextOutputMappingHandler();
+		NextOutputMappingHandler handler = new NextOutputMappingHandler(frame);
 		handler.setFinishHandler((newConfigAction) -> {
-			mapping.setAction(newConfigAction);
-			mapMappingToElement.get(mapping).updateTexts();
-			frame.removeMouseListener(handler);
+			if (newConfigAction != null) {
+				mapping.setAction(newConfigAction);
+				mapMappingToElement.get(mapping).updateTexts();
+				setStatusText("Changed mapping action: " + mapping.getAction().toStringUI());
+			} else {
+				setStatusText("Unable to record mapping action."); 
+			}
+			Toolkit.getDefaultToolkit().removeAWTEventListener(handler);
 			frame.removeKeyListener(handler);
 			enableAllMappingButtons();
-			setStatusText("Changed mapping action: " + mapping.getAction().toStringUI());
 		});
-		frame.addMouseListener(handler);
+		// Global mouse listener: 
+		// https://stackoverflow.com/questions/11502619/see-when-a-mousebutton-is-clicked-without-adding-mouselisteners-to-all-component
+	    Toolkit.getDefaultToolkit().addAWTEventListener(handler, AWTEvent.MOUSE_EVENT_MASK);
 		frame.addKeyListener(handler);
 		frame.requestFocus();
 	}
