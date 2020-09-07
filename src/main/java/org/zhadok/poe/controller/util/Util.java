@@ -93,6 +93,9 @@ public class Util {
 
 	public static void copyFileFromResource(String resourcePath, File fileOut) throws IOException {
 		InputStream resourceStream = Util.class.getResourceAsStream(resourcePath);
+		if (resourceStream == null || fileOut == null) {
+			throw new NullPointerException("Unable to get resource as stream, resourcePath='" + resourcePath + "', fileOut=" + fileOut); 
+		}
 		Files.copy(resourceStream, fileOut.toPath()); 		
 	}
 	

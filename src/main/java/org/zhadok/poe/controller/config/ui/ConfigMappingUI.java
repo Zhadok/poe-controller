@@ -352,7 +352,7 @@ public class ConfigMappingUI implements Loggable, ControllerEventListener {
 		List<String> eventNames = new ArrayList<>();
 		int nEvents = 2; 
 		app.setEventsToBeSkipped(1);
-		app.registerForNextEvents(nEvents, false, (inputEvent) -> {
+		app.registerForNextEvents(nEvents, false, true, (inputEvent) -> {
 			log(1, "Received next event: " + inputEvent + " (analog=" + inputEvent.getComponent().isAnalog() + ")");
 			eventNames.add(inputEvent.getComponent().getName()); 
 			if (eventNames.size() >= nEvents) {
@@ -481,6 +481,9 @@ public class ConfigMappingUI implements Loggable, ControllerEventListener {
 		app.resetControllerMappingListener();
 	}
 
+	/**
+	 * Use to record the next digital (non-analog) controller input
+	 */
 	private abstract class NextControllerMappingHandler implements ChangeListener {
 		private boolean buttonPressed = false; // holds the last pressed state of the button
 		protected final Mapping mapping;
@@ -508,7 +511,7 @@ public class ConfigMappingUI implements Loggable, ControllerEventListener {
 					log(1, "Registering for next event...");
 					setStatusText("Listening for next input event...");
 					app.setEventsToBeSkipped(1);
-					app.registerForNextEvents(nEvents, true, (inputEvent) -> {
+					app.registerForNextEvents(nEvents, true, false, (inputEvent) -> {
 						log(1, "Received next event: " + inputEvent + " (analog=" + inputEvent.getComponent().isAnalog()
 								+ ")");
 						setStatusText("Received event: " + inputEvent.toString());

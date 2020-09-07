@@ -41,6 +41,7 @@ public class App implements Loggable {
 	private ControllerEventListener nextEventListener = null; 	
 	private int nEventsToBeSkipped = 0; 
 	private boolean filterNextEventsAnalog = false; 
+	private boolean filterMouseEvents = false; 
 	private int nEventsSingleListener = 0; 
 	
 	public App() {}
@@ -60,11 +61,16 @@ public class App implements Loggable {
 	
 	/**
 	 * For the next n events, only this listener will be called
-	 * @param listener
+	 * @param nEvents How many events to listen for
+	 * @param filterNextEventsAnalog Should analog events (e.g. mouse movement, joystick movement) be filtered? Note that 
+	 * no other listeners will be notified
+	 * @param filterMouseEvents Should mouse events be filtered? (Events with component name='x' or 'y'
+	 * @param listener The listener to be notified
 	 */
-	public void registerForNextEvents(int nEvents, boolean filterNextEventsAnalog, ControllerEventListener listener) {
+	public void registerForNextEvents(int nEvents, boolean filterNextEventsAnalog, boolean filterMouseEvents, ControllerEventListener listener) {
 		this.nEventsSingleListener = nEvents; 
 		this.filterNextEventsAnalog = filterNextEventsAnalog; 
+		this.filterMouseEvents = filterMouseEvents; 
 		this.nextEventListener = listener; 
 	}	
 	
@@ -108,7 +114,6 @@ public class App implements Loggable {
 						this.handleEvent(event);
 					}
 				}
-				
 			}
 
 			/*
@@ -170,6 +175,10 @@ public class App implements Loggable {
 		if (filterNextEventsAnalog == true && event.getComponent().isAnalog() == true) {
 			return; 
 		}
+		if (filterMouseEvents == true && event.getComponent().isAnalog() == true && 
+				("x".equals(event.getComponent().getName()) || "y".equals(event.getComponent().getName()))) {
+			return; 
+		}
 		
 		if (this.nextEventListener != null && nEventsSingleListener > 0) {
 			// If a single event listener is registered for next event (e.g. UI)
@@ -180,6 +189,7 @@ public class App implements Loggable {
 			if (nEventsSingleListener == 0) {
 				this.nextEventListener = null; 
 				this.filterNextEventsAnalog = false; 
+				this.filterMouseEvents = false; 
 			}
 		} else {
 			this.notifyControllerEventListeners(event); 
@@ -228,6 +238,7 @@ public class App implements Loggable {
 		app.registerEventListener(window);
 		app.startPolling(); 
 	}
+
 	
 	
 	
