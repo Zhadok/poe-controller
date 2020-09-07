@@ -79,6 +79,7 @@ public class Config {
 	@JsonIgnore
 	public Mapping getMovementMapping(MacroName macroName, String axis) {
 		Mapping characterMovementMapping = getMapping().stream()
+				.filter(mapping -> mapping.hasAction()) 
 				.filter(mapping -> mapping.getAction().hasMacro())
 				.filter(mapping -> macroName.equals(mapping.getAction().getMacro().getName()))
 				.filter(mapping -> axis.equals(mapping.getAction().getMacro().getParameter("axis")))
@@ -119,7 +120,7 @@ public class Config {
 		if (eventName1.equals(eventName2)) {
 			throw new IllegalArgumentException("eventName1=" + eventName1 + " should not equal eventName2"); 
 		}
-		
+		// TODO: Better: Check correct instance of, is analog, and get axis
 		// If event names are "X Axis" and "Y Axis" 
 		if (eventName1.toLowerCase().replaceAll("axis", "").contains("x") 
 			|| eventName2.toLowerCase().replaceAll("axis", "").contains("y")) {
@@ -137,12 +138,12 @@ public class Config {
 		}
 		
 		// If event names are "Z Axis" and "Z Rotation"
-		if (eventName1.toLowerCase().contains("axis") && eventName2.toLowerCase().contains("rotation")) {
+		if (eventName2.toLowerCase().contains("rotation")) {
 			mappingX.setButtonName(eventName1);
 			mappingY.setButtonName(eventName2);
 			return; 
 		}
-		if (eventName2.toLowerCase().contains("axis") && eventName1.toLowerCase().contains("rotation")) {
+		if (eventName1.toLowerCase().contains("rotation")) {
 			mappingX.setButtonName(eventName2);
 			mappingY.setButtonName(eventName1);
 			return; 

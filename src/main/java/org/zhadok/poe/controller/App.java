@@ -135,6 +135,10 @@ public class App implements Loggable {
 		}
 	}
 	
+	public boolean isEventMouseMovement(Event event) {
+		return "net.java.games.input.RawMouse$Axis".equals(event.getComponent().getClass().getName()); 
+	}
+	
 	private long lastEventTimestamp = -1; 
 	private void handleEvent(Event event) {
 		if (getVerbosity() >= 3) {
@@ -175,8 +179,7 @@ public class App implements Loggable {
 		if (filterNextEventsAnalog == true && event.getComponent().isAnalog() == true) {
 			return; 
 		}
-		if (filterMouseEvents == true && event.getComponent().isAnalog() == true && 
-				("x".equals(event.getComponent().getName()) || "y".equals(event.getComponent().getName()))) {
+		if (filterMouseEvents == true && event.getComponent().isAnalog() == true && isEventMouseMovement(event)) {
 			return; 
 		}
 		
@@ -224,6 +227,8 @@ public class App implements Loggable {
 		System.setProperty("java.library.path", Constants.DIR_LIB.toString());
 		Util.ensureProjectDirExists(); 
 		Loggable.writeLogsToFile(Constants.FILE_LOG); 
+		
+		Util.getJavaRuntime().forEach(detail -> System.out.println(detail)); 
 		
 		JInputLib lib = new JInputLib();
 		lib.prepare(); 

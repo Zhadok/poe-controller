@@ -42,6 +42,7 @@ import org.zhadok.poe.controller.util.Util;
 
 import net.java.games.input.Component;
 import net.java.games.input.Event;
+import java.awt.FlowLayout;
 
 public class ConfigMappingUI implements Loggable, ControllerEventListener {
 
@@ -84,6 +85,9 @@ public class ConfigMappingUI implements Loggable, ControllerEventListener {
 	private JPanel panelMouseMovementSensitivity;
 	private JLabel labelMouseMovementSensitivity;
 	private JNumberTextField textFieldMouseMovementSensitivity;
+	private JPanel panelMouseMovementStickThreshold;
+	private JLabel labelMouseMovementStickThreshold;
+	private JNumberTextField textFieldMouseMovementStickThreshold;
 
 	/**
 	 * Create the application.
@@ -260,6 +264,24 @@ public class ConfigMappingUI implements Loggable, ControllerEventListener {
 		
 		panelMouseMovementSensitivity.add(textFieldMouseMovementSensitivity, BorderLayout.EAST);
 		
+		panelMouseMovementStickThreshold = new JPanel();
+		panelEastBottom.add(panelMouseMovementStickThreshold);
+		panelMouseMovementStickThreshold.setLayout(new BorderLayout(0, 0));
+		
+		labelMouseMovementStickThreshold = new JLabel("<html>\r\nMouse movement stick threshold: <br>\r\n- Set a value between 0 and 1<br>\r\n- The mouse will be moved when the stick value is above this value<br>\r\n- If your mouse moves without using the mapped stick, try setting this value higher\r\n</html>");
+		panelMouseMovementStickThreshold.add(labelMouseMovementStickThreshold, BorderLayout.CENTER);
+		
+		textFieldMouseMovementStickThreshold = new JNumberTextField();
+		textFieldMouseMovementStickThreshold.setHorizontalAlignment(SwingConstants.RIGHT);
+		textFieldMouseMovementStickThreshold.setColumns(5);
+		textFieldMouseMovementStickThreshold.addNumberListener((number) -> {
+			if (number == null) return; 
+			log(1, "Setting mouse movement stick threshold to " + number); 
+			configCopy.getMouseMovement().setStickThreshold(number); 
+		});
+		
+		panelMouseMovementStickThreshold.add(textFieldMouseMovementStickThreshold, BorderLayout.EAST);
+		
 		this.resetConfigElements();
 		
 		frame.setVisible(true);
@@ -275,6 +297,7 @@ public class ConfigMappingUI implements Loggable, ControllerEventListener {
 		textFieldOffsetCharacterScreenCenterY.setText(configCopy.getCharacterMovement().getMouseOffsetCharacterToScreenCenterY() + "");
 		textFieldCharacterMovementRadius.setText(configCopy.getCharacterMovement().getMouseDistance_ScreenSizeMultiplier() + ""); 
 		textFieldMouseMovementSensitivity.setText(configCopy.getMouseMovement().getMouseMoveSensitivity() + ""); 
+		textFieldMouseMovementStickThreshold.setText(configCopy.getMouseMovement().getStickThreshold() + ""); 
 	}
 
 	private void addConfigMappingElement(Mapping mapping, int mappingIndex) {
@@ -345,15 +368,15 @@ public class ConfigMappingUI implements Loggable, ControllerEventListener {
 	
 	private void startMapStickListener(MacroName macroName) {
 		disableAllMappingButtons();
-		String message = "Listening for next controller input..."; 
+		String message = "Listening for controller joystick... Move the joystick around in circles"; 
 		log(1, message);
 		setStatusText(message);
 		
 		List<String> eventNames = new ArrayList<>();
-		int nEvents = 2; 
+		int nEvents = 100; 
 		app.setEventsToBeSkipped(1);
 		app.registerForNextEvents(nEvents, false, true, (inputEvent) -> {
-			log(1, "Received next event: " + inputEvent + " (analog=" + inputEvent.getComponent().isAnalog() + ")");
+			log(2, "Received next event: " + inputEvent + " (analog=" + inputEvent.getComponent().isAnalog() + ")");
 			eventNames.add(inputEvent.getComponent().getName()); 
 			if (eventNames.size() >= nEvents) {
 				
@@ -362,7 +385,9 @@ public class ConfigMappingUI implements Loggable, ControllerEventListener {
 						.distinct()
 						.collect(Collectors.toList()); 
 				if (uniqueNames.size() != 2) {
-					System.err.println("Did not receive two unique events, instead got " + uniqueNames); 
+					String errorMessage = "Error mapping joystick: Did not receive exactly two unique events, instead got " + uniqueNames; 
+					log(1, errorMessage); 
+					setStatusText(errorMessage);
 					enableAllMappingButtons();
 					return; 
 				}

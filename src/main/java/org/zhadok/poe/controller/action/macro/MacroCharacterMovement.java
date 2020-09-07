@@ -15,7 +15,6 @@ import org.zhadok.poe.controller.util.Util;
 import net.java.games.input.Event;
 
 public class MacroCharacterMovement extends Macro {
-	
 
 	private final ConfigCharacterMovement settings;
 	

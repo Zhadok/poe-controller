@@ -3,7 +3,9 @@ package org.zhadok.poe.controller.action.macro;
 import java.awt.Robot;
 
 import org.zhadok.poe.controller.action.ActionHandlerMacro;
+import org.zhadok.poe.controller.config.ConfigManager;
 import org.zhadok.poe.controller.config.pojo.ConfigMacro;
+import org.zhadok.poe.controller.config.pojo.ConfigMouseMovement;
 import org.zhadok.poe.controller.mouse.MouseMoveThread;
 
 import net.java.games.input.Event;
@@ -12,7 +14,6 @@ public class MacroMouseMovement extends Macro {
 
 	public final MouseMoveThread mouseMoveThread;
 	
-	public final float stickThreshold = 0.0001f; 
 	public float stickXAxis = 0; 
 	public float stickYAxis = 0; 
 	

@@ -16,6 +16,7 @@ import java.math.RoundingMode;
 import java.nio.file.Files;
 import java.text.DecimalFormat;
 import java.util.Arrays;
+import java.util.List;
 
 import org.zhadok.poe.controller.Constants;
 
@@ -102,6 +103,15 @@ public class Util {
 	public static boolean runningFromJar() {
 		String protocol = Util.class.getResource("").getProtocol();
 		return "jar".equals(protocol);  
+	}
+
+	public static List<String> getJavaRuntime() {
+		return Arrays.asList("Java Virtual Machine specification version: " + System.getProperty("java.vm.specification.version"),
+				"Java Virtual Machine specification vendor: " + System.getProperty("java.vm.specification.vendor"),
+				"Java Virtual Machine specification name: " + System.getProperty("java.vm.specification.name"),
+				"Java Virtual Machine implementation version: " + System.getProperty("java.vm.version"),
+				"Java Virtual Machine implementation vendor: " + System.getProperty("java.vm.vendor"),
+				"Java Virtual Machine implementation name: " + System.getProperty("java.vm.name")); 
 	}
 
 }

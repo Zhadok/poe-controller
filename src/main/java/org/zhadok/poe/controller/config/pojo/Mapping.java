@@ -95,6 +95,10 @@ public class Mapping {
 		return this.getButtonName() + " (" + this.getButtonDescription() + ")" + actionsString; 
 	}
 
+	public boolean hasAction() {
+		return this.getAction() != null;
+	}
+
 	
 
 	

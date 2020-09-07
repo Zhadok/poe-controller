@@ -77,12 +77,21 @@ public class ConfigTest {
 	
 	private static Stream<Arguments> provideArgumentsForMapEventsToMovement() {
 	    return Stream.of(
-	      Arguments.of("X Axis", "Y Axis", "X Axis", "Y Axis", false),
-	      Arguments.of("Y Axis", "X Axis", "X Axis", "Y Axis", false),
-	      Arguments.of("X Axis", "X Axis", null, null, true),
-	      Arguments.of("Z Axis", "Z Rotation", "Z Axis", "Z Rotation", false),
-	      Arguments.of("Z Rotation", "Z Axis", "Z Axis", "Z Rotation", false),
-	      Arguments.of("Custom Axis 1", "Custom Axis 2", null, null, true)
+	    		// Stadia joysticks
+	    		Arguments.of("X Axis", "Y Axis", "X Axis", "Y Axis", false),
+	    		Arguments.of("Z Axis", "Z Rotation", "Z Axis", "Z Rotation", false),
+	    		// XBox One controller (German)
+	    		Arguments.of("X-Achse", "Y-Achse", "X-Achse", "Y-Achse", false),
+	    		Arguments.of("X-Rotation", "Y-Rotation", "X-Rotation", "Y-Rotation", false),
+	    		// Nacon
+	    		// Left stick is same as Stadia
+	    		Arguments.of("X Rotation", "Y Rotation", "X Rotation", "Y Rotation", false),
+	    		
+	    		// (Other language)
+	    		
+	    		// Invalid mappings
+	    		Arguments.of("X Axis", "X Axis", null, null, true),
+	    		Arguments.of("Custom Axis 1", "Custom Axis 2", null, null, true)
 	    );
 	}
 	
@@ -99,6 +108,12 @@ public class ConfigTest {
 			classUnderTest.mapStickEventsToMovement(mappingX, mappingY, eventName1, eventName2); 
 			assertEquals(mappingXButtonName, mappingX.getButtonName()); 
 			assertEquals(mappingYButtonName, mappingY.getButtonName()); 
+			
+			// Check mirror case
+			classUnderTest.mapStickEventsToMovement(mappingX, mappingY, eventName2, eventName1); 
+			assertEquals(mappingXButtonName, mappingX.getButtonName()); 
+			assertEquals(mappingYButtonName, mappingY.getButtonName()); 
+			
 		} else {
 			assertThrows(IllegalArgumentException.class, 
 					() -> classUnderTest.mapStickEventsToMovement(mappingX, mappingY, eventName1, eventName2));

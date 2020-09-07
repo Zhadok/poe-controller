@@ -66,8 +66,8 @@ public class MouseMoveThread implements Loggable, Runnable {
 	
 
 	private boolean isStickAboveThreshold() {
-		return Math.abs(macroMouseMovement.stickXAxis) > macroMouseMovement.stickThreshold &&
-				Math.abs(macroMouseMovement.stickYAxis) > macroMouseMovement.stickThreshold; 
+		return Math.abs(macroMouseMovement.stickXAxis) > settings.getStickThreshold() ||
+				Math.abs(macroMouseMovement.stickYAxis) > settings.getStickThreshold(); 
 	}
 	
 	public double transformStickAxis(double stickAxis) {

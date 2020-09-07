@@ -3,6 +3,7 @@ package org.zhadok.poe.controller.config.pojo;
 public class ConfigMouseMovement {
 	
 	private double mouseMoveSensitivity;
+	private double stickThreshold; 
 	
 	private int pollRightStickIntervalMS;
 	
@@ -14,16 +15,22 @@ public class ConfigMouseMovement {
 		this.mouseMoveSensitivity = value; 
 	}
 
-
 	public int getPollRightStickIntervalMS() {
 		return pollRightStickIntervalMS;
 	}
 	
-	@Override
-	public String toString() {
-		return "ConfigMouseMovement [mouseMoveSensitivity=" + mouseMoveSensitivity + ", pollRightStickIntervalMS="
-				+ pollRightStickIntervalMS + "]";
+	public double getStickThreshold() {
+		return stickThreshold;
 	}
 
+	public void setStickThreshold(double stickThreshold) {
+		this.stickThreshold = stickThreshold;
+	}
 
+	@Override
+	public String toString() {
+		return "ConfigMouseMovement [mouseMoveSensitivity=" + mouseMoveSensitivity + ", stickThreshold="
+				+ stickThreshold + ", pollRightStickIntervalMS=" + pollRightStickIntervalMS + "]";
+	}
+	
 }
