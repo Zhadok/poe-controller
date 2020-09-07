@@ -2,6 +2,8 @@ package org.zhadok.poe.controller.config.pojo;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.zhadok.poe.controller.action.macro.MacroName;
 import org.zhadok.poe.controller.config.ConfigFactory;
@@ -9,6 +11,8 @@ import org.zhadok.poe.controller.config.ConfigFactory;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import net.java.games.input.Component.Identifier.Axis;
 
 public class Config {
 
@@ -111,16 +115,18 @@ public class Config {
 	 * Known event names: 
 	 * "X Axis", "Y Axis", "Z Axis", "Z Rotation"
 	 * 
+	 * Use {@link mapStickEventsToMovementBetter: Check correct instance of, is analog, and get axis
+	 * 
 	 * @param mappingX
 	 * @param mappingY
 	 * @param eventName1
 	 * @param eventName2
 	 */
+	@Deprecated
 	public void mapStickEventsToMovement(Mapping mappingX, Mapping mappingY, String eventName1, String eventName2) {
 		if (eventName1.equals(eventName2)) {
 			throw new IllegalArgumentException("eventName1=" + eventName1 + " should not equal eventName2"); 
 		}
-		// TODO: Better: Check correct instance of, is analog, and get axis
 		// If event names are "X Axis" and "Y Axis" 
 		if (eventName1.toLowerCase().replaceAll("axis", "").contains("x") 
 			|| eventName2.toLowerCase().replaceAll("axis", "").contains("y")) {
@@ -153,7 +159,30 @@ public class Config {
 				eventName1 + "' and '" + eventName2 + "'"); 
 	}
 	
-	
+	public void mapStickEventsToMovement(Mapping mappingX, Mapping mappingY,
+			Map<Axis, String> mapIdentifierToComponentName) {
+		if (mapIdentifierToComponentName.keySet().size() != 2) {
+			throw new IllegalArgumentException("Pass in exactly two Axes, argument is: " + mapIdentifierToComponentName); 
+		}
+		Set<Axis> axes = mapIdentifierToComponentName.keySet(); 
+		// If event names are "X Axis" and "Y Axis" 
+		if (axes.contains(Axis.X) && axes.contains(Axis.Y)) {
+			mappingX.setButtonName(mapIdentifierToComponentName.get(Axis.X));
+			mappingY.setButtonName(mapIdentifierToComponentName.get(Axis.Y));
+		}
+		// If event names are "Z Axis" and "Z Rotation"
+		if (axes.contains(Axis.Z) && axes.contains(Axis.RZ)) {
+			mappingX.setButtonName(mapIdentifierToComponentName.get(Axis.Z));
+			mappingY.setButtonName(mapIdentifierToComponentName.get(Axis.RZ));
+		}
+		
+		if (axes.contains(Axis.RX) && axes.contains(Axis.RY)) {
+			mappingX.setButtonName(mapIdentifierToComponentName.get(Axis.RX));
+			mappingY.setButtonName(mapIdentifierToComponentName.get(Axis.RY));
+		}
+		
+	}
+
 }
 
 

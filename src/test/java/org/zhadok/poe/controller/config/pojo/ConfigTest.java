@@ -95,6 +95,7 @@ public class ConfigTest {
 	    );
 	}
 	
+	@SuppressWarnings("deprecation")
 	@ParameterizedTest
 	@MethodSource("provideArgumentsForMapEventsToMovement")
 	void mapEventsToMovement(String eventName1, String eventName2, 
@@ -118,8 +119,7 @@ public class ConfigTest {
 			assertThrows(IllegalArgumentException.class, 
 					() -> classUnderTest.mapStickEventsToMovement(mappingX, mappingY, eventName1, eventName2));
 		}
-		
-		
 	}
+	
 
 }

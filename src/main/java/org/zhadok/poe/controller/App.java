@@ -64,7 +64,7 @@ public class App implements Loggable {
 	 * @param nEvents How many events to listen for
 	 * @param filterNextEventsAnalog Should analog events (e.g. mouse movement, joystick movement) be filtered? Note that 
 	 * no other listeners will be notified
-	 * @param filterMouseEvents Should mouse events be filtered? (Events with component name='x' or 'y'
+	 * @param filterMouseEvents Should mouse events be filtered? (Events with component name='x' or 'y')
 	 * @param listener The listener to be notified
 	 */
 	public void registerForNextEvents(int nEvents, boolean filterNextEventsAnalog, boolean filterMouseEvents, ControllerEventListener listener) {

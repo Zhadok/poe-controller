@@ -9,12 +9,10 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
@@ -41,8 +39,8 @@ import org.zhadok.poe.controller.util.Loggable;
 import org.zhadok.poe.controller.util.Util;
 
 import net.java.games.input.Component;
+import net.java.games.input.Component.Identifier.Axis;
 import net.java.games.input.Event;
-import java.awt.FlowLayout;
 
 public class ConfigMappingUI implements Loggable, ControllerEventListener {
 
@@ -372,32 +370,38 @@ public class ConfigMappingUI implements Loggable, ControllerEventListener {
 		log(1, message);
 		setStatusText(message);
 		
-		List<String> eventNames = new ArrayList<>();
-		int nEvents = 100; 
+		// Mappings: 
+		// x => "X Axis" or "X-Achse"
+		Map<Component.Identifier.Axis,String> mapIdentifierToComponentName = new HashMap<>(); 
+		final int nEventsToRecord = 100; 
+		AtomicInteger nEventsRecorded = new AtomicInteger(0); 
 		app.setEventsToBeSkipped(1);
-		app.registerForNextEvents(nEvents, false, true, (inputEvent) -> {
-			log(2, "Received next event: " + inputEvent + " (analog=" + inputEvent.getComponent().isAnalog() + ")");
-			eventNames.add(inputEvent.getComponent().getName()); 
-			if (eventNames.size() >= nEvents) {
-				
-				// Check that exactly 2 events are passed and that they are different
-				List<String> uniqueNames = eventNames.stream()
-						.distinct()
-						.collect(Collectors.toList()); 
-				if (uniqueNames.size() != 2) {
-					String errorMessage = "Error mapping joystick: Did not receive exactly two unique events, instead got " + uniqueNames; 
+		app.registerForNextEvents(nEventsToRecord, false, true, (inputEvent) -> {
+			log(1, "Received next event: " + inputEvent + " (analog=" + inputEvent.getComponent().isAnalog() + ")");
+			log(1, inputEvent.getComponent().getIdentifier().getClass().getName());
+			// inputEvent.getComponent().getName() ==> Returns "X Axis", "X Achse", "X-Axis", "X Rotation"
+			// inputEvent.getComponent().getIdentifier() can check if instanceof Axis, and name of identifier is better
+			if (inputEvent.getComponent().getIdentifier() instanceof Component.Identifier.Axis &&
+				inputEvent.getComponent().isAnalog() == true) { 
+					mapIdentifierToComponentName.put((Axis) inputEvent.getComponent().getIdentifier(), 
+							inputEvent.getComponent().getName()); 
+			}
+			if (nEventsRecorded.incrementAndGet() >= nEventsToRecord) {
+				// Check that exactly 2 different events are passed
+				if (mapIdentifierToComponentName.keySet().size() != 2) {
+					String errorMessage = "Error mapping joystick: Did not receive exactly two unique events, instead got " + mapIdentifierToComponentName; 
 					log(1, errorMessage); 
 					setStatusText(errorMessage);
 					enableAllMappingButtons();
 					return; 
 				}
-				
-				onMapMovementEventsRecorded(macroName, uniqueNames); 
+				onMapMovementEventsRecorded(macroName, mapIdentifierToComponentName); 
 			}
 		});
 	}
 	
-	private void onMapMovementEventsRecorded(MacroName macroName, List<String> uniqueNames) {
+	private void onMapMovementEventsRecorded(MacroName macroName, Map<Axis,String> mapIdentifierToComponentName) {
+		log(1, "Mapping joystick " + mapIdentifierToComponentName + "  to " + macroName); 
 		// First, check if movement mappings already exist
 		Mapping mappingX; 
 		if ((mappingX = configCopy.getMovementMapping(macroName, "x")) == null) {
@@ -415,7 +419,7 @@ public class ConfigMappingUI implements Loggable, ControllerEventListener {
 		// Next, map recorded events to the mappings... "best guess"
 		// Sample event names: "X Axis", "Y Axis", "Z axis", "Z rotation"
 		try {
-			configCopy.mapStickEventsToMovement(mappingX, mappingY, uniqueNames.get(0), uniqueNames.get(1));
+			configCopy.mapStickEventsToMovement(mappingX, mappingY, mapIdentifierToComponentName);
 		} catch (IllegalArgumentException e) {
 			System.out.println("Unable to map events to x and y for character movement");
 			e.printStackTrace();
