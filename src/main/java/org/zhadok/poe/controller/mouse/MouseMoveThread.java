@@ -70,7 +70,7 @@ public class MouseMoveThread implements Loggable, Runnable {
 				Math.abs(macroMouseMovement.stickYAxis) > macroMouseMovement.stickThreshold; 
 	}
 	
-	private double transformStickAxis(double stickAxis) {
+	public double transformStickAxis(double stickAxis) {
 		//int sign = (stickAxis >= 0) ? +1 : -1;
 		//return sign * stickAxis*stickAxis;
 		return stickAxis; 
@@ -87,7 +87,7 @@ public class MouseMoveThread implements Loggable, Runnable {
 		Point currentLocation = Util.getMouseLocation();
 		int dx = (int) (getStickXAxis() * settings.getMouseMoveSensitivity()); 
 		int dy = (int) (getStickYAxis() * settings.getMouseMoveSensitivity()); 
-		robot.mouseMove(currentLocation.x + dx, currentLocation.y + dy);
+		robot.mouseMove((int) currentLocation.x + dx, (int) currentLocation.y + dy);
 	}
 	
 	

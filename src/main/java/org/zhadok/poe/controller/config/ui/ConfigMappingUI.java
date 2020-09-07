@@ -339,7 +339,7 @@ public class ConfigMappingUI implements Loggable, ControllerEventListener {
 		List<String> eventNames = new ArrayList<>();
 		int nEvents = 2; 
 		app.setEventsToBeSkipped(1);
-		app.registerForNextEvents(nEvents, (inputEvent) -> {
+		app.registerForNextEvents(nEvents, false, (inputEvent) -> {
 			log(1, "Received next event: " + inputEvent + " (analog=" + inputEvent.getComponent().isAnalog() + ")");
 			eventNames.add(inputEvent.getComponent().getName()); 
 			if (eventNames.size() >= nEvents) {
@@ -464,6 +464,7 @@ public class ConfigMappingUI implements Loggable, ControllerEventListener {
 	public void saveConfig() {
 		ConfigManager.getInstance().saveConfig(this.configCopy);
 		ConfigManager.getInstance().resetLoadedConfig();
+		setStatusText("Config saved. New mapping activated");
 		app.resetControllerMappingListener();
 	}
 
@@ -494,7 +495,7 @@ public class ConfigMappingUI implements Loggable, ControllerEventListener {
 					log(1, "Registering for next event...");
 					setStatusText("Listening for next input event...");
 					app.setEventsToBeSkipped(1);
-					app.registerForNextEvents(nEvents, (inputEvent) -> {
+					app.registerForNextEvents(nEvents, true, (inputEvent) -> {
 						log(1, "Received next event: " + inputEvent + " (analog=" + inputEvent.getComponent().isAnalog()
 								+ ")");
 						setStatusText("Received event: " + inputEvent.toString());
@@ -518,7 +519,7 @@ public class ConfigMappingUI implements Loggable, ControllerEventListener {
 
 		@Override
 		public void onInputEventReceived(Event event) {
-			if (event.getComponent().isAnalog() == false) {
+			if (event.getComponent().isAnalog() == false && event.getValue() > 0) {
 				log(1, "Setting mapping button name to '" + event.getComponent().getName() + "'");
 				this.mapping.setButtonName(event.getComponent().getName());
 				this.mapping.setButtonValue(event.getValue());

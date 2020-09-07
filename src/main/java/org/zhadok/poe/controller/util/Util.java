@@ -40,7 +40,7 @@ public class Util {
 		}
 		else {
 			Point screenCenter = Util.getScreenCenter(); 
-			location = new java.awt.Point(screenCenter.x, screenCenter.y); 
+			location = new java.awt.Point((int) screenCenter.x, (int) screenCenter.y); 
 		}
 		return new Point(location.x, location.y); 
 	}

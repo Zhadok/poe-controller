@@ -77,11 +77,14 @@ public class MacroCharacterMovement extends Macro {
 
 		// X axis value between -1 and 1
 		// Y axis value between -1 and 1
-		int dx = (int) (this.stickXAxis * this.maxMouseDistanceToCenter_CharacterMovement); 
-		int dy = (int) (this.stickYAxis * this.maxMouseDistanceToCenter_CharacterMovement); 
+		// https://www.xarg.org/2017/07/how-to-map-a-square-to-a-circle/
+		Point pointOnSquare = new Point(stickXAxis, stickYAxis); 
+		Point pointOnCircle = pointOnSquare.mapFromCircleToSquare(); 
+		int dx = (int) (pointOnCircle.x * this.maxMouseDistanceToCenter_CharacterMovement); 
+		int dy = (int) (pointOnCircle.y * this.maxMouseDistanceToCenter_CharacterMovement); 
 			
-		int x = this.pointCharacterCenter.x + dx;
-		int y = this.pointCharacterCenter.y + dy; 
+		int x = (int) this.pointCharacterCenter.x + dx;
+		int y = (int) this.pointCharacterCenter.y + dy; 
 		robot.mouseMove(x, y);
 		log(2, "Change (" + dx + "/" + dy + ") from center (" + pointCharacterCenter.x + "/" + pointCharacterCenter.y + 
 				") ==> to new point (" + x + "/" + y + "), changed axis=" + macro.getParameter("axis"));

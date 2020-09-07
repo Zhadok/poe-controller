@@ -40,6 +40,7 @@ public class App implements Loggable {
 	private List<ControllerEventListener> controllerEventListeners = new ArrayList<>(); 
 	private ControllerEventListener nextEventListener = null; 	
 	private int nEventsToBeSkipped = 0; 
+	private boolean filterNextEventsAnalog = false; 
 	private int nEventsSingleListener = 0; 
 	
 	public App() {}
@@ -61,8 +62,9 @@ public class App implements Loggable {
 	 * For the next n events, only this listener will be called
 	 * @param listener
 	 */
-	public void registerForNextEvents(int nEvents, ControllerEventListener listener) {
+	public void registerForNextEvents(int nEvents, boolean filterNextEventsAnalog, ControllerEventListener listener) {
 		this.nEventsSingleListener = nEvents; 
+		this.filterNextEventsAnalog = filterNextEventsAnalog; 
 		this.nextEventListener = listener; 
 	}	
 	
@@ -165,6 +167,9 @@ public class App implements Loggable {
 			nEventsToBeSkipped--; 
 			return; 
 		}
+		if (filterNextEventsAnalog == true && event.getComponent().isAnalog() == true) {
+			return; 
+		}
 		
 		if (this.nextEventListener != null && nEventsSingleListener > 0) {
 			// If a single event listener is registered for next event (e.g. UI)
@@ -174,6 +179,7 @@ public class App implements Loggable {
 			
 			if (nEventsSingleListener == 0) {
 				this.nextEventListener = null; 
+				this.filterNextEventsAnalog = false; 
 			}
 		} else {
 			this.notifyControllerEventListeners(event); 
