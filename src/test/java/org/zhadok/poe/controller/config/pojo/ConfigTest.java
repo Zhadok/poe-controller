@@ -10,7 +10,6 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -36,7 +35,7 @@ public class ConfigTest {
 	private static Stream<Arguments> provideArgumentsForSanityCheckConfig() {
 	    return Stream.of(
 	    		Arguments.of(Arrays.asList("Button 1", "Button 2", "Button 3"), false),
-	    		Arguments.of(Arrays.asList("Button 1", "Button 1", "Button 3"), true)
+	    		Arguments.of(Arrays.asList("Button 1", "Button 1", "Button 3"), true) // Duplicate names should lead to error
 	      );
 	}
 	
@@ -44,9 +43,11 @@ public class ConfigTest {
 	@MethodSource("provideArgumentsForSanityCheckConfig")
 	void sanityCheckConfig(List<String> buttonNames, boolean expectException) {
 		buttonNames.forEach((buttonName) -> {
+			MappingKey mappingKey = new MappingKey(buttonName, null, null, false, null); 
+			
 			Mapping newMapping = new Mapping(); 
-			newMapping.setButtonName(buttonName);
-			classUnderTest.getMapping().add(newMapping) ;
+			newMapping.setMappingKey(mappingKey);
+			classUnderTest.getMapping().add(newMapping);
 		}); 
 		
 		if (expectException == true) {
@@ -84,20 +85,20 @@ public class ConfigTest {
 	    		
 	    		// Stadia joysticks
 	    		Arguments.of(Axis.X, "X Axis", Axis.Y, "Y Axis", false), 
-	    		Arguments.of(Axis.Z, "Z Axis", Axis.RZ, "Z Rotation", false)
+	    		Arguments.of(Axis.Z, "Z Axis", Axis.RZ, "Z Rotation", false), 
 	    		
-//	    		// XBox One controller (German)
-//	    		Arguments.of("X-Achse", "Y-Achse", "X-Achse", "Y-Achse", false),
-//	    		Arguments.of("X-Rotation", "Y-Rotation", "X-Rotation", "Y-Rotation", false),
-//	    		// Nacon
-//	    		// Left stick is same as Stadia
-//	    		Arguments.of("X Rotation", "Y Rotation", "X Rotation", "Y Rotation", false),
-//	    		
-//	    		// (Other language)
-//	    		
-//	    		// Invalid mappings
-//	    		Arguments.of("X Axis", "X Axis", null, null, true),
-//	    		Arguments.of("Custom Axis 1", "Custom Axis 2", null, null, true)
+	    		// XBox One controller (German)
+	    		Arguments.of(Axis.X, "X-Achse", Axis.Y, "Y-Achse", false), 
+	    		Arguments.of(Axis.RX, "X-Rotation", Axis.RY, "Y-Rotation", false), 
+	    		
+	    		// Nacon
+	    		// Left stick is same as Stadia
+	    		Arguments.of(Axis.X, "X Rotation", Axis.Y, "Y Rotation", false),
+
+	    		//Invalid mappings
+	    		Arguments.of(Axis.X, "axis1", Axis.X, "axis2", true),
+	    		Arguments.of(Axis.X, "x", Axis.RX, "rx", true),
+	    		Arguments.of(Axis.X, "xDuplicate", Axis.Y, "xDuplicate", true)
 	    );
 	}
 	
@@ -113,15 +114,12 @@ public class ConfigTest {
 		mapIdentifierToComponentName.put(axisX, expectedEventNameX); 
 		mapIdentifierToComponentName.put(axisY, expectedEventNameY); 
 		
-//		System.out.println(mapIdentifierToComponentName.keySet().contains(axisX));
-//		System.out.println(mapIdentifierToComponentName.keySet().contains(Axis.X));
-		
-		
 		if (expectException == false) {
 			classUnderTest.mapStickEventsToMovement(mappingX, mappingY, mapIdentifierToComponentName);
-			assertEquals(expectedEventNameX, mappingX.getButtonName()); 
-			assertEquals(expectedEventNameY, mappingY.getButtonName()); 
-			
+			assertEquals(expectedEventNameX, mappingX.getMappingKey().getComponentName()); 
+			assertEquals(axisX.getName(), mappingX.getMappingKey().getId());
+			assertEquals(expectedEventNameY, mappingY.getMappingKey().getComponentName()); 
+			assertEquals(axisY.getName(), mappingY.getMappingKey().getId());
 		} else {
 			assertThrows(IllegalArgumentException.class, 
 					() -> classUnderTest.mapStickEventsToMovement(mappingX, mappingY, mapIdentifierToComponentName));

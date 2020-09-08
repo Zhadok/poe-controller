@@ -41,7 +41,7 @@ public class App implements Loggable {
 	private ControllerEventListener nextEventListener = null; 	
 	private int nEventsToBeSkipped = 0; 
 	private boolean filterNextEventsAnalog = false; 
-	private boolean filterMouseEvents = false; 
+	public boolean filterMouseEvents = false; 
 	private int nEventsSingleListener = 0; 
 	
 	public App() {}
@@ -141,6 +141,10 @@ public class App implements Loggable {
 	
 	private long lastEventTimestamp = -1; 
 	private void handleEvent(Event event) {
+		if (isEventMouseMovement(event)) {
+			return; 
+		}
+		
 		if (getVerbosity() >= 3) {
 			StringBuffer buffer = new StringBuffer();
 			//buffer.append(event.getNanos()).append(", ");
@@ -157,7 +161,7 @@ public class App implements Loggable {
 			if (comp.isAnalog()) {
 				buffer.append(value);
 			} else {
-				if (value == 1.0f) {
+				if (value > 0) {
 					buffer.append("On (value=" + value + ")");
 				} else {
 					buffer.append("Off (value=" + value + ")");
@@ -169,7 +173,7 @@ public class App implements Loggable {
 			buffer.append(". ").append(diffMS).append("ms since last event"); 
 			this.lastEventTimestamp = timestamp; 
 			
-			System.out.println(buffer.toString());
+			log(3, buffer.toString());
 		}
 		
 		if (nEventsToBeSkipped > 0) {
@@ -177,9 +181,6 @@ public class App implements Loggable {
 			return; 
 		}
 		if (filterNextEventsAnalog == true && event.getComponent().isAnalog() == true) {
-			return; 
-		}
-		if (filterMouseEvents == true && event.getComponent().isAnalog() == true && isEventMouseMovement(event)) {
 			return; 
 		}
 		

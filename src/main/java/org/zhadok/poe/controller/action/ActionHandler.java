@@ -3,7 +3,7 @@ package org.zhadok.poe.controller.action;
 import java.awt.Robot;
 
 import org.zhadok.poe.controller.App;
-import org.zhadok.poe.controller.config.pojo.ConfigAction;
+import org.zhadok.poe.controller.config.pojo.Mapping;
 import org.zhadok.poe.controller.util.Loggable;
 
 import net.java.games.input.Event;
@@ -24,7 +24,7 @@ public abstract class ActionHandler implements Loggable {
 		return App.verbosity;
 	}
 	
-	public abstract void handleAction(Event event, ConfigAction action); 
+	public abstract void handleAction(Event event, Mapping mapping); 
 	
 	public void sleep(int ms) {
 		if (this.isInterrupted())

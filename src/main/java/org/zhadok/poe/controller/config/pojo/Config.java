@@ -1,6 +1,9 @@
 package org.zhadok.poe.controller.config.pojo;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -54,13 +57,12 @@ public class Config {
 	 * @param mapping
 	 */
 	public void sanityCheckMapping() {
-		ArrayList<String> componentNames = new ArrayList<>(); 
+		ArrayList<MappingKey> mappingKeys = new ArrayList<>(); 
 		for (Mapping m : getMapping()) {
-			
-			if (componentNames.indexOf(m.getComponentName()) >= 0) {
-				throw new RuntimeException("Duplicate mapping buttonName='" + m.getComponentName() + "'"); 
+			if (mappingKeys.contains(m.getMappingKey())) {
+				throw new RuntimeException("Duplicate mapping with " + m.getMappingKey().toString()); 
 			}
-			componentNames.add(m.getComponentName()); 
+			mappingKeys.add(m.getMappingKey()); 
 		}
 	}
 	
@@ -109,83 +111,49 @@ public class Config {
 		return movementMapping; 
 	}
 
-	/**
-	 * Attempts to two event names to character movement "x" and "y" axis
-	 * 
-	 * Known event names: 
-	 * "X Axis", "Y Axis", "Z Axis", "Z Rotation"
-	 * 
-	 * Use {@link mapStickEventsToMovementBetter: Check correct instance of, is analog, and get axis
-	 * 
-	 * @param mappingX
-	 * @param mappingY
-	 * @param eventName1
-	 * @param eventName2
-	 */
-	@Deprecated
-	public void mapStickEventsToMovement(Mapping mappingX, Mapping mappingY, String eventName1, String eventName2) {
-		if (eventName1.equals(eventName2)) {
-			throw new IllegalArgumentException("eventName1=" + eventName1 + " should not equal eventName2"); 
-		}
-		// If event names are "X Axis" and "Y Axis" 
-		if (eventName1.toLowerCase().replaceAll("axis", "").contains("x") 
-			|| eventName2.toLowerCase().replaceAll("axis", "").contains("y")) {
-			
-			mappingX.setButtonName(eventName1);
-			mappingY.setButtonName(eventName2);
-			return; 
-		} 
-		if (eventName2.toLowerCase().replaceAll("axis", "").contains("x") 
-			|| eventName1.toLowerCase().replaceAll("axis", "").contains("y")) {
-			
-			mappingX.setButtonName(eventName2);
-			mappingY.setButtonName(eventName1);
-			return; 
-		}
-		
-		// If event names are "Z Axis" and "Z Rotation"
-		if (eventName2.toLowerCase().contains("rotation")) {
-			mappingX.setButtonName(eventName1);
-			mappingY.setButtonName(eventName2);
-			return; 
-		}
-		if (eventName1.toLowerCase().contains("rotation")) {
-			mappingX.setButtonName(eventName2);
-			mappingY.setButtonName(eventName1);
-			return; 
-		}
-		
-		throw new IllegalArgumentException("No combination of mapping posssible for found event names '" + 
-				eventName1 + "' and '" + eventName2 + "'"); 
-	}
-	
 	public void mapStickEventsToMovement(Mapping mappingX, Mapping mappingY,
 			Map<Axis, String> mapIdentifierToComponentName) {
-		if (mapIdentifierToComponentName.keySet().size() != 2) {
-			throw new IllegalArgumentException("Pass in exactly two Axes, argument is: " + mapIdentifierToComponentName); 
-		}
+		validateComponentNames(mapIdentifierToComponentName); 
+
 		Set<Axis> axes = mapIdentifierToComponentName.keySet(); 
-		// If event names are "X Axis" and "Y Axis" 
-		if (axes.contains(Axis.X) && axes.contains(Axis.Y)) {
-			mappingX.setButtonName(mapIdentifierToComponentName.get(Axis.X));
-			mappingY.setButtonName(mapIdentifierToComponentName.get(Axis.Y));
-			return; 
-		}
-		// If event names are "Z Axis" and "Z Rotation"
-		if (axes.contains(Axis.Z) && axes.contains(Axis.RZ)) {
-			mappingX.setButtonName(mapIdentifierToComponentName.get(Axis.Z));
-			mappingY.setButtonName(mapIdentifierToComponentName.get(Axis.RZ));
-			return; 
-		}
+
+		// Combination of which axes go together, and which corresponds to X and Y
+		// Nested list is: Name of X axis, name of Y axis
+		List<List<Axis>> recognizedAxisSets = new ArrayList<>(); 
 		
-		if (axes.contains(Axis.RX) && axes.contains(Axis.RY)) {
-			mappingX.setButtonName(mapIdentifierToComponentName.get(Axis.RX));
-			mappingY.setButtonName(mapIdentifierToComponentName.get(Axis.RY));
-			return; 
+		// If event names are "X Axis" and "Y Axis" 
+		recognizedAxisSets.add(Arrays.asList(Axis.X, Axis.Y)); 
+		// If event names are "Z Axis" and "Z Rotation"
+		recognizedAxisSets.add(Arrays.asList(Axis.Z, Axis.RZ)); 
+		recognizedAxisSets.add(Arrays.asList(Axis.RX, Axis.RY)); 
+		
+		for (List<Axis> recognizedAxisSet : recognizedAxisSets) {
+			if (recognizedAxisSet.containsAll(axes)) {
+				
+				mappingX.setMappingKey(new MappingKey(mapIdentifierToComponentName.get(recognizedAxisSet.get(0)), 
+						recognizedAxisSet.get(0).toString(), null, true, null));
+				mappingY.setMappingKey(new MappingKey(mapIdentifierToComponentName.get(recognizedAxisSet.get(1)), 
+						recognizedAxisSet.get(1).toString(), null, true, null));
+				return; 
+			}
 		}
 		
 		throw new IllegalArgumentException("No combination of mapping posssible for " + mapIdentifierToComponentName); 
+	}
+
+	private void validateComponentNames(Map<Axis, String> mapIdentifierToComponentName) {
+		if (mapIdentifierToComponentName.keySet().size() != 2) {
+			throw new IllegalArgumentException("Pass in exactly two Axes, argument is: " + mapIdentifierToComponentName); 
+		}
 		
+		// Check that two component names are not the same
+		Collection<String> values = mapIdentifierToComponentName.values(); 
+		Iterator<String> iterator = values.iterator(); 
+		String name1 = iterator.next(); 
+		String name2 = iterator.next(); 
+		if (name1.equals(name2)) {
+			throw new IllegalArgumentException("Should receive two different component names, got " + name1); 
+		}
 	}
 
 }

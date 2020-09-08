@@ -34,6 +34,7 @@ import org.zhadok.poe.controller.action.macro.MacroName;
 import org.zhadok.poe.controller.config.ConfigManager;
 import org.zhadok.poe.controller.config.pojo.Config;
 import org.zhadok.poe.controller.config.pojo.Mapping;
+import org.zhadok.poe.controller.config.pojo.MappingKey;
 import org.zhadok.poe.controller.util.LimitedSizeQueue;
 import org.zhadok.poe.controller.util.Loggable;
 import org.zhadok.poe.controller.util.Util;
@@ -373,7 +374,7 @@ public class ConfigMappingUI implements Loggable, ControllerEventListener {
 		// Mappings: 
 		// x => "X Axis" or "X-Achse"
 		Map<Component.Identifier.Axis,String> mapIdentifierToComponentName = new HashMap<>(); 
-		final int nEventsToRecord = 100; 
+		final int nEventsToRecord = 50; 
 		AtomicInteger nEventsRecorded = new AtomicInteger(0); 
 		app.setEventsToBeSkipped(1);
 		app.registerForNextEvents(nEventsToRecord, false, true, (inputEvent) -> {
@@ -413,8 +414,6 @@ public class ConfigMappingUI implements Loggable, ControllerEventListener {
 			mappingY = configCopy.addDefaultMovementMapping(macroName, "y"); 
 			this.addConfigMappingElement(mappingY);
 		}
-		mappingX.setButtonValue(null);
-		mappingY.setButtonValue(null);
 		
 		// Next, map recorded events to the mappings... "best guess"
 		// Sample event names: "X Axis", "Y Axis", "Z axis", "Z rotation"
@@ -426,11 +425,12 @@ public class ConfigMappingUI implements Loggable, ControllerEventListener {
 		}
 		mapMappingToElement.get(mappingX).updateTexts();
 		mapMappingToElement.get(mappingY).updateTexts();
-		enableAllMappingButtons();
 		
 		String message = "Successfully mapped input events to " + macroName.name().replace("Macro", ""); 
 		log(1, message); 
 		setStatusText(message);
+		
+		enableAllMappingButtons();
 	}
 	
 	/**
@@ -566,8 +566,7 @@ public class ConfigMappingUI implements Loggable, ControllerEventListener {
 		public void onInputEventReceived(Event event) {
 			if (event.getComponent().isAnalog() == false && event.getValue() > 0) {
 				log(1, "Setting mapping button name to '" + event.getComponent().getName() + "'");
-				this.mapping.setButtonName(event.getComponent().getName());
-				this.mapping.setButtonValue(event.getValue());
+				this.mapping.setMappingKey(new MappingKey(event)); 
 			}
 		}
 	}

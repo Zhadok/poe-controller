@@ -68,7 +68,8 @@ public class MappingRow extends JPanel {
 	}
 	
 	public void updateTexts() {
-		textInput.setText(mapping.getInputStringUI());
+		String mappingKeyString = mapping.getMappingKey() != null ? mapping.getMappingKey().toStringUI() : ""; 
+		textInput.setText(mappingKeyString);
 		String actionString = mapping.getAction() != null ? mapping.getAction().toStringUI() : "";
 		textOutput.setText(actionString);
 	}

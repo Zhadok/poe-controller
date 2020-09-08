@@ -5,6 +5,7 @@ import java.awt.event.KeyEvent;
 import java.util.Random;
 
 import org.zhadok.poe.controller.config.pojo.ConfigAction;
+import org.zhadok.poe.controller.config.pojo.Mapping;
 
 import net.java.games.input.Event;
 
@@ -14,27 +15,28 @@ public class ActionHandlerKey extends ActionHandler {
 	
 	public ActionHandlerKey(Robot robot) {
 		super(robot);
+		log(1, "Initializing ActionHandlerKey..."); 
 		this.random = new Random(); 
 	}
 
 
 	@Override
-	public void handleAction(Event event, ConfigAction action) {
-		
-		int keycode = action.getKeyEventCode(); 
-		boolean isDigitalButton = event.getComponent().isAnalog() == false;
+	public void handleAction(Event event, Mapping mapping) {
+		int keycode = mapping.getAction().getKeyEventCode(); 
+		boolean isDigitalButton = mapping.getMappingKey().isAnalog() == false; 
 		boolean isPressed = event.getValue() > 0f; 
 		
+		log(3, "Handling event with mapping=" + mapping.toString()); 
+		
 		if (isDigitalButton && isPressed) {
-			log(2, "Press keycode=" + keycode); 
+			log(2, "Pressing action=" + mapping.getAction().toString()); 
 			robot.keyPress(keycode);
-		}
-		if (isDigitalButton && !isPressed) {
-			log(2, "Release keycode=" + keycode); 
+		} else if (isDigitalButton && !isPressed) {
+			log(2, "Releasing keycode=" + keycode); 
 			robot.keyRelease(keycode);
 		}	
 	}
-	
+
 	public int getRandom(double min, double max) {
 		return (int) (random.nextInt((int) (max - min + 1)) + min);
 	}

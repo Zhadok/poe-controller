@@ -1,11 +1,16 @@
 package org.zhadok.poe.controller;
 
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.zhadok.poe.controller.config.ConfigManager;
 import org.zhadok.poe.controller.config.pojo.Config;
 import org.zhadok.poe.controller.config.pojo.Mapping;
+import org.zhadok.poe.controller.config.pojo.MappingKey;
 import org.zhadok.poe.controller.util.Loggable;
+
+import net.java.games.input.Event;
 
 
 public class ControllerSettings implements Loggable {
@@ -24,10 +29,13 @@ public class ControllerSettings implements Loggable {
 	 * Example component names: 
 	 * Button 0
 	 * Button 16
-	 * Hat Switch - 0.25
+	 * Hat Switch 
+	 * 
+	 * Values are between 0 and 1
+	 * 
+	 * Identifiers are of class Component.Identifier 
 	 */
-	private HashMap<String, Mapping> buttonMappings; 
-	
+	private Map<MappingKey, Mapping> buttonMappings; 
 	
 	
 	public ControllerSettings() {
@@ -41,9 +49,9 @@ public class ControllerSettings implements Loggable {
 			log(1, "Loading config from file: " + Constants.FILE_SETTINGS);
 			Config config = ConfigManager.getInstance().getLoadedConfig(); 
 			
-			for (Mapping m : config.getMapping()) {
-				String componentName = m.getComponentName(); 
-				buttonMappings.put(componentName, m); 
+			for (Mapping mapping : config.getMapping()) {
+				MappingKey mappingKey = mapping.getMappingKey(); 
+				buttonMappings.put(mappingKey, mapping); 
 			}
 			log(1, "Loaded config file."); 
 			log(2, config.toString()); 
@@ -52,8 +60,24 @@ public class ControllerSettings implements Loggable {
 		}
 	}
 	
-	public Mapping getMapping(String componentName) {
-		return this.buttonMappings.get(componentName); 
+	private List<Mapping> getMappingsByNameAndId(MappingKey mappingKey) {
+		return null; 
+	}
+	
+	/**
+	 * @param mappingKey Which combination of componentName, id and valueWhenPressed are we looking for?
+	 * @param event Needed to properly map key "release" events
+	 * @return
+	 */
+	public Mapping getMapping(MappingKey mappingKey, Event event) {
+		// Problem are "Hat switch" type buttons, where one value being released leads to all buttons being released
+		
+		boolean isDigitalButton = mappingKey.isAnalog() == false; 
+		boolean isPressed = event.getValue() > 0f; 
+		// Return all mappings corresponding to {componentName, id} 
+		// because at this point we don't know what the correct valueWhenPressed is
+		
+		return this.buttonMappings.get(mappingKey); 
 	}
 
 	@Override

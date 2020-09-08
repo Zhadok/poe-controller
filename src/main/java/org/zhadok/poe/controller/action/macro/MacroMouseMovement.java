@@ -3,9 +3,7 @@ package org.zhadok.poe.controller.action.macro;
 import java.awt.Robot;
 
 import org.zhadok.poe.controller.action.ActionHandlerMacro;
-import org.zhadok.poe.controller.config.ConfigManager;
 import org.zhadok.poe.controller.config.pojo.ConfigMacro;
-import org.zhadok.poe.controller.config.pojo.ConfigMouseMovement;
 import org.zhadok.poe.controller.mouse.MouseMoveThread;
 
 import net.java.games.input.Event;

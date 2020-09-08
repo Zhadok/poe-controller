@@ -6,6 +6,7 @@ import java.util.Random;
 
 import org.apache.commons.lang3.NotImplementedException;
 import org.zhadok.poe.controller.config.pojo.ConfigAction;
+import org.zhadok.poe.controller.config.pojo.Mapping;
 
 import net.java.games.input.Event;
 
@@ -21,14 +22,16 @@ public class ActionHandlerMouse extends ActionHandler {
 	
 	public ActionHandlerMouse(Robot robot) {
 		super(robot);
+		log(1, "Initializing ActionHandlerMouse..."); 
 		this.random = new Random(); 
 	}
 
 	
 	@Override
-	public void handleAction(Event event, ConfigAction action) {
+	public void handleAction(Event event, Mapping mapping) {
+		log(3, "Handling event with mapping=" + mapping.toString()); 
 		
-		switch (action.getMouseAction()) {
+		switch (mapping.getAction().getMouseAction()) {
 		case LEFT_CLICK: 
 			this.mouseLeftClick(); 
 			break; 
@@ -50,11 +53,9 @@ public class ActionHandlerMouse extends ActionHandler {
 		case MIDDLE_CLICK: 
 			this.mouseMiddleClick(); 
 		default: 
-			throw new NotImplementedException("Mouse action '" + action.getMouseAction() + "' not implemented!"); 
+			throw new NotImplementedException("Mouse action '" + mapping.getAction().getMouseAction() + "' not implemented!"); 
 		}
-		
 	}
-	
 
 	public int getRandom(double min, double max) {
 		return (int) (random.nextInt((int) (max - min + 1)) + min);
@@ -69,7 +70,6 @@ public class ActionHandlerMouse extends ActionHandler {
 	public int getDelayMSMousePressAndRelease() {
 		return getRandom(70, 90); 
 	}
-	
 	
 	public void mouseLeftPress() {
 		if (this.isMouseLeftPressed == false && !this.isInterrupted()) {

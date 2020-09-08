@@ -118,7 +118,7 @@ public class ConfigAction {
 	@Override
 	public String toString() {
 		if (this.hasKey()) {
-			return "'" + this.getKey() + "' (" + this.getKeyEventCode() + ")"; 
+			return "Action ['" + this.getKey() + "' (" + this.getKeyEventCode() + ")]"; 
 		}
 		else if (this.hasMouseAction()) {
 			return this.getMouseAction().toString(); 

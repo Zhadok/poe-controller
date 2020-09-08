@@ -6,11 +6,10 @@ import java.awt.Robot;
 import org.zhadok.poe.controller.action.ActionHandlerKey;
 import org.zhadok.poe.controller.action.ActionHandlerMacro;
 import org.zhadok.poe.controller.action.ActionHandlerMouse;
-import org.zhadok.poe.controller.config.pojo.ConfigAction;
 import org.zhadok.poe.controller.config.pojo.Mapping;
+import org.zhadok.poe.controller.config.pojo.MappingKey;
 import org.zhadok.poe.controller.util.Loggable;
 
-import net.java.games.input.Component;
 import net.java.games.input.Event;
 
 
@@ -52,36 +51,35 @@ public class ControllerMapping implements Loggable, ControllerEventListener {
 
 	public void handleEvent(Event event) {
 		
-		Component comp = event.getComponent(); 
-
 		// Hat switch = left group of 4 buttons, all share name. Only value is different (0.25, 0.5, 0.75, 1.0)
-		String componentName = comp.getName().equals("Hat Switch") ? 
-				Mapping.getComponentName("Hat Switch", event.getValue()) :
-				comp.getName(); 
-		log(3, "ComponentName: " + componentName);
+		MappingKey mappingKey = new MappingKey(event); 
+		log(3, "Handling event with " + mappingKey.toString());
 		
-		Mapping mapping = settings.getMapping(componentName); 
+		Mapping mapping = settings.getMapping(mappingKey, event); 
 		if (mapping != null) {
-			this.handleEvent(event, mapping.getAction());
+			if (mapping.getAction() == null) {
+				log(1, "No config action assigned to mapping: " + mapping.toString()); 
+				return;
+			}
+			this.handleEvent(event, mapping);
 		}
 		else {
-			//log(1, "Unknown component name: " + componentName); 
+			log(3, "No mapping found for " + mappingKey.toString()); 
 		}
 	}
 
-	private void handleEvent(Event event, ConfigAction action) {
-		if (action == null) {
-			return;
+	private void handleEvent(Event event, Mapping mapping) {
+		if (mapping.getAction().hasKey()) {
+			actionHandlerKey.handleAction(event, mapping);
 		}
-		
-		if (action.hasKey()) {
-			actionHandlerKey.handleAction(event, action);
+		else if (mapping.getAction().hasMouseAction()) {
+			actionHandlerMouse.handleAction(event, mapping);
 		}
-		else if (action.hasMouseAction()) {
-			actionHandlerMouse.handleAction(event, action);
+		else if (mapping.getAction().hasMacro()) {
+			actionHandlerMacro.handleAction(event, mapping);
 		}
-		else if (action.hasMacro()) {
-			actionHandlerMacro.handleAction(event, action);
+		else {
+			throw new RuntimeException("Action has no assigned key, mouse or macro: " + mapping.getAction().toString()); 
 		}
 	}
 	

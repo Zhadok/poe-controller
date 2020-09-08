@@ -5,7 +5,7 @@ import java.nio.file.Paths;
 
 public class Constants {
 	
-	public static final int DEFAULT_VERBOSITY = 1;
+	public static final int DEFAULT_VERBOSITY = 3;
 	
 	public static final Path DIR_JAVA_TEMP = Paths.get(System.getProperty("java.io.tmpdir"));
 	
