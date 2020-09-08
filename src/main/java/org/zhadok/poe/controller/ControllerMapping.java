@@ -2,6 +2,7 @@ package org.zhadok.poe.controller;
 
 import java.awt.AWTException;
 import java.awt.Robot;
+import java.util.List;
 
 import org.zhadok.poe.controller.action.ActionHandlerKey;
 import org.zhadok.poe.controller.action.ActionHandlerMacro;
@@ -50,20 +51,18 @@ public class ControllerMapping implements Loggable, ControllerEventListener {
 	}
 
 	public void handleEvent(Event event) {
-		
-		// Hat switch = left group of 4 buttons, all share name. Only value is different (0.25, 0.5, 0.75, 1.0)
 		MappingKey mappingKey = new MappingKey(event); 
 		log(3, "Handling event with " + mappingKey.toString());
 		
-		Mapping mapping = settings.getMapping(mappingKey, event); 
-		if (mapping != null) {
-			if (mapping.getAction() == null) {
+		List<Mapping> relevantMappings = settings.getRelevantMappings(mappingKey, event); 
+		relevantMappings.forEach(mapping -> {
+			if (mapping.hasAction() == false) {
 				log(1, "No config action assigned to mapping: " + mapping.toString()); 
 				return;
 			}
 			this.handleEvent(event, mapping);
-		}
-		else {
+		});
+		if (relevantMappings.isEmpty()) {
 			log(3, "No mapping found for " + mappingKey.toString()); 
 		}
 	}
