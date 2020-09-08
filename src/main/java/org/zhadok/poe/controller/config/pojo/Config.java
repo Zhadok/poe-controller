@@ -169,17 +169,22 @@ public class Config {
 		if (axes.contains(Axis.X) && axes.contains(Axis.Y)) {
 			mappingX.setButtonName(mapIdentifierToComponentName.get(Axis.X));
 			mappingY.setButtonName(mapIdentifierToComponentName.get(Axis.Y));
+			return; 
 		}
 		// If event names are "Z Axis" and "Z Rotation"
 		if (axes.contains(Axis.Z) && axes.contains(Axis.RZ)) {
 			mappingX.setButtonName(mapIdentifierToComponentName.get(Axis.Z));
 			mappingY.setButtonName(mapIdentifierToComponentName.get(Axis.RZ));
+			return; 
 		}
 		
 		if (axes.contains(Axis.RX) && axes.contains(Axis.RY)) {
 			mappingX.setButtonName(mapIdentifierToComponentName.get(Axis.RX));
 			mappingY.setButtonName(mapIdentifierToComponentName.get(Axis.RY));
+			return; 
 		}
+		
+		throw new IllegalArgumentException("No combination of mapping posssible for " + mapIdentifierToComponentName); 
 		
 	}
 

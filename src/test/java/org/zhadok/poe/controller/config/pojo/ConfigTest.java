@@ -8,7 +8,9 @@ import static org.zhadok.poe.controller.action.macro.MacroName.MacroCharacterMov
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -18,6 +20,8 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.zhadok.poe.controller.action.macro.MacroName;
 import org.zhadok.poe.controller.config.ConfigManager;
+
+import net.java.games.input.Component.Identifier.Axis;
 
 public class ConfigTest {
 	
@@ -77,47 +81,50 @@ public class ConfigTest {
 	
 	private static Stream<Arguments> provideArgumentsForMapEventsToMovement() {
 	    return Stream.of(
+	    		
 	    		// Stadia joysticks
-	    		Arguments.of("X Axis", "Y Axis", "X Axis", "Y Axis", false),
-	    		Arguments.of("Z Axis", "Z Rotation", "Z Axis", "Z Rotation", false),
-	    		// XBox One controller (German)
-	    		Arguments.of("X-Achse", "Y-Achse", "X-Achse", "Y-Achse", false),
-	    		Arguments.of("X-Rotation", "Y-Rotation", "X-Rotation", "Y-Rotation", false),
-	    		// Nacon
-	    		// Left stick is same as Stadia
-	    		Arguments.of("X Rotation", "Y Rotation", "X Rotation", "Y Rotation", false),
+	    		Arguments.of(Axis.X, "X Axis", Axis.Y, "Y Axis", false), 
+	    		Arguments.of(Axis.Z, "Z Axis", Axis.RZ, "Z Rotation", false)
 	    		
-	    		// (Other language)
-	    		
-	    		// Invalid mappings
-	    		Arguments.of("X Axis", "X Axis", null, null, true),
-	    		Arguments.of("Custom Axis 1", "Custom Axis 2", null, null, true)
+//	    		// XBox One controller (German)
+//	    		Arguments.of("X-Achse", "Y-Achse", "X-Achse", "Y-Achse", false),
+//	    		Arguments.of("X-Rotation", "Y-Rotation", "X-Rotation", "Y-Rotation", false),
+//	    		// Nacon
+//	    		// Left stick is same as Stadia
+//	    		Arguments.of("X Rotation", "Y Rotation", "X Rotation", "Y Rotation", false),
+//	    		
+//	    		// (Other language)
+//	    		
+//	    		// Invalid mappings
+//	    		Arguments.of("X Axis", "X Axis", null, null, true),
+//	    		Arguments.of("Custom Axis 1", "Custom Axis 2", null, null, true)
 	    );
 	}
 	
-	@SuppressWarnings("deprecation")
 	@ParameterizedTest
 	@MethodSource("provideArgumentsForMapEventsToMovement")
-	void mapEventsToMovement(String eventName1, String eventName2, 
-			String mappingXButtonName, String mappingYButtonName, 
+	void mapEventsToMovement(Axis axisX, String expectedEventNameX, Axis axisY, String expectedEventNameY, 
 			boolean expectException) {
 		
 		Mapping mappingX = classUnderTest.addDefaultMovementMapping(MacroCharacterMovement, "x"); 
 		Mapping mappingY = classUnderTest.addDefaultMovementMapping(MacroCharacterMovement, "y"); 
 		
+		HashMap<Axis,String> mapIdentifierToComponentName = new HashMap<>(); 
+		mapIdentifierToComponentName.put(axisX, expectedEventNameX); 
+		mapIdentifierToComponentName.put(axisY, expectedEventNameY); 
+		
+//		System.out.println(mapIdentifierToComponentName.keySet().contains(axisX));
+//		System.out.println(mapIdentifierToComponentName.keySet().contains(Axis.X));
+		
+		
 		if (expectException == false) {
-			classUnderTest.mapStickEventsToMovement(mappingX, mappingY, eventName1, eventName2); 
-			assertEquals(mappingXButtonName, mappingX.getButtonName()); 
-			assertEquals(mappingYButtonName, mappingY.getButtonName()); 
-			
-			// Check mirror case
-			classUnderTest.mapStickEventsToMovement(mappingX, mappingY, eventName2, eventName1); 
-			assertEquals(mappingXButtonName, mappingX.getButtonName()); 
-			assertEquals(mappingYButtonName, mappingY.getButtonName()); 
+			classUnderTest.mapStickEventsToMovement(mappingX, mappingY, mapIdentifierToComponentName);
+			assertEquals(expectedEventNameX, mappingX.getButtonName()); 
+			assertEquals(expectedEventNameY, mappingY.getButtonName()); 
 			
 		} else {
 			assertThrows(IllegalArgumentException.class, 
-					() -> classUnderTest.mapStickEventsToMovement(mappingX, mappingY, eventName1, eventName2));
+					() -> classUnderTest.mapStickEventsToMovement(mappingX, mappingY, mapIdentifierToComponentName));
 		}
 	}
 	
