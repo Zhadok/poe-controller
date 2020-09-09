@@ -115,7 +115,7 @@
 				<!-- Produce the jar with dependencies -->
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-shade-plugin</artifactId>
-				<version>2.4.3</version>
+				<version>3.2.0</version>
 				<executions>
 					<execution>
 						<phase>package</phase>
@@ -139,7 +139,7 @@
 			<plugin>
 				<!-- Produce the zip including the jar with dependencies -->
 				<artifactId>maven-assembly-plugin</artifactId>
-				<version>2.5.5</version>
+				<version>3.3.0</version>
 				<configuration>
 					<appendAssemblyId>false</appendAssemblyId>
 					<descriptors>

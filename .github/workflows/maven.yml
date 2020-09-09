@@ -21,7 +21,7 @@ jobs:
       with:
         java-version: 1.8
     - name: Build with Maven
-      run: mvn -B clean package
+      run: mvn -B clean package -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
     
     # https://docs.github.com/en/actions/language-and-framework-guides/building-and-testing-java-with-maven#packaging-workflow-data-as-artifacts
     - name: Copy Maven artifacts
