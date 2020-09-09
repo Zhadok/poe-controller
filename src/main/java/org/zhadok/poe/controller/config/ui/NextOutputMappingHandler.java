@@ -77,13 +77,14 @@ public class NextOutputMappingHandler implements KeyListener, Loggable, AWTEvent
 	}
 
 	public void keyPressed(KeyEvent e) {
+		
+	}
+
+	public void keyReleased(KeyEvent e) {
 		String keyName = ConfigAction.mapKeyEventCodeToString(e.getKeyCode());
 		log(1, "Detected key event: " + e.getKeyChar() + ", key code=" + e.getKeyCode() + ", found keyName=" + keyName);
 		ConfigAction action = new ConfigAction(keyName, null, null, null);
 		onFinish(action);
-	}
-
-	public void keyReleased(KeyEvent e) {
 	}
 
 	private void onFinish(ConfigAction action) {

@@ -2,6 +2,8 @@
 - 0.0.5
     - Fixed a bug where controller events are not properly picked up: Use controller event name, id and value instead of just controller event name to find mappings
     - Added a lot of event logging (for troubleshooting) 
+    - Filled the README with content
+    - Prepare better default_settings.json
 
 - 0.0.4: When listening for new controller input: 
     - Fixed a bug with the cmd file for starting the jar

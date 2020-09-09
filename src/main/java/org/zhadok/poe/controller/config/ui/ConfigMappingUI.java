@@ -103,6 +103,7 @@ public class ConfigMappingUI implements Loggable, ControllerEventListener {
 	private void initialize() {
 		frame = new JFrame();
 		frame.setTitle("poe-controller");
+		frame.setFocusTraversalKeysEnabled(false); // Otherwise "Tab" does not get picked up when listening
 		
 		URL iconUrl = getClass().getResource("/img/icon-console.png"); 
 		frame.setIconImage(new ImageIcon(iconUrl).getImage());

@@ -5,7 +5,6 @@ import java.awt.event.InputEvent;
 import java.util.Random;
 
 import org.apache.commons.lang3.NotImplementedException;
-import org.zhadok.poe.controller.config.pojo.ConfigAction;
 import org.zhadok.poe.controller.config.pojo.Mapping;
 
 import net.java.games.input.Event;

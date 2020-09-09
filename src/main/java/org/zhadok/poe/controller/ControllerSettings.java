@@ -69,7 +69,10 @@ public class ControllerSettings implements Loggable {
 	 * @return
 	 */
 	private List<MappingKey> getMappingKeysByNameAndId(MappingKey otherMappingKey) {
+		
 		return this.buttonMappings.keySet().stream()
+			.filter(mappingKey -> mappingKey != null) 
+			.filter(mappingKey -> mappingKey.getComponentName() != null && mappingKey.getId() != null) 
 			.filter(mappingKey -> mappingKey.getComponentName().equals(otherMappingKey.getComponentName()) && 
 								  mappingKey.getId().equals(otherMappingKey.getId()))
 			.collect(Collectors.toList());
