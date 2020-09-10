@@ -9,8 +9,10 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -538,36 +540,47 @@ public class ConfigMappingUI implements Loggable, ControllerEventListener {
 					// Need to skip one event: The next event will be the release key of clicking
 					// the button
 					// (e.g. mouse released)
+					// THIS IS INCONSISTENT per platform
 					log(1, "Registering for next event...");
 					setStatusText("Listening for next input event...");
-					app.setEventsToBeSkipped(1);
+					List<Event> inputEvents = new ArrayList<>(); 
+					//app.setEventsToBeSkipped(1);
 					app.registerForNextEvents(nEvents, true, false, (inputEvent) -> {
 						log(1, "Received next event: " + inputEvent + " (analog=" + inputEvent.getComponent().isAnalog()
 								+ ")");
 						setStatusText("Received event: " + inputEvent.toString());
-						onInputEventReceived(inputEvent);
+						inputEvents.add(inputEvent); 
+						
+						if (inputEvents.size() >= nEvents) {
+							onInputEventsReceived(inputEvents);
 
-						mapMappingToElement.get(mapping).updateTexts();
-						enableAllMappingButtons();
+							mapMappingToElement.get(mapping).updateTexts();
+							enableAllMappingButtons();
+						}
 					});
 				}
 			}
 		}
 
-		public abstract void onInputEventReceived(Event event);
+		public abstract void onInputEventsReceived(List<Event> events);
 	}
 
 	public class NextInputMappingHandler extends NextControllerMappingHandler {
 
 		public NextInputMappingHandler(Mapping mapping) {
-			super(mapping, 1);
+			super(mapping, 2);
 		}
 
 		@Override
-		public void onInputEventReceived(Event event) {
-			if (event.getComponent().isAnalog() == false && event.getValue() > 0) {
-				log(1, "Setting mapping button name to '" + event.getComponent().getName() + "'");
-				this.mapping.setMappingKey(new MappingKey(event)); 
+		public void onInputEventsReceived(List<Event> events) {
+			// Pick the first event which has a value > 0 
+			// On some machines, the first event is left mouse button released (==> value 0) 
+			for (Event event : events) {
+				if (event.getComponent().isAnalog() == false && event.getValue() > 0) {
+					log(1, "Setting mapping button name to '" + event.getComponent().getName() + "'");
+					this.mapping.setMappingKey(new MappingKey(event)); 
+					return;
+				}
 			}
 		}
 	}
