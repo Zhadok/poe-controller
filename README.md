@@ -49,7 +49,7 @@ Character movement:<br>Joystick moves mouse in<br> circle around character  |  M
 
 # Setup
 This section describes how to map controller inputs to keyboard/mouse outputs. 
-See [here](#sample-config) for an example of a full mapping. 
+See [here](#gameplay-and-sample-mapping) for an example of a full mapping. 
 
 <a href="ui-screenshot"></a>
 <img src="docs/media/ui-screenshot.png" width="500" />
@@ -61,7 +61,7 @@ See [here](#sample-config) for an example of a full mapping.
 - Move the joystick in a circle.
 - Two mappings should be assigned with the output `MacroCharacterMovement` (6) or `MacroMouseMovement` (7)
 - Click on (8): `Save config`. 
-- **Note**: poe-controller will do its best to automatically recognize which events belong to which controller axis. **However**: If the automatic mapping fails please retry. If it still fails please try [manually changing settings.](#changeSettingManually)
+- **Note**: poe-controller will do its best to automatically recognize which events belong to which controller axis. **However**: If the automatic mapping fails please retry. If it still fails please try [manually changing settings.](#how-can-i-change-a-setting-without-the-user-interface)
 
 ## Map controller buttons to keyboard or mouse outputs
 
@@ -97,7 +97,6 @@ Make sure you have [installed Java](https://www.oracle.com/java/technologies/jav
 
 
 ## How can I change a setting without the user interface?
-<a name="changeSettingManually"></a>
 **Note**: Having knowledge of [JSON](https://www.w3schools.com/whatis/whatis_json.asp) is probably required for these steps.  
 
 1) Close the application. 
@@ -118,9 +117,7 @@ All of your data stays local.
 
 
 ## How do I retrieve a detailed log?
-<a href="how-to-retrieve-log"></a>
-
-1) The application can be started with different levels of [verbosity](#verbosity). Open the file `start-poe-controller.cmd` and change the number in `-Dverbosity=1` to `3`. 
+1) The application can be started with different levels of [verbosity](#command-line-parameters). Open the file `start-poe-controller.cmd` and change the number in `-Dverbosity=1` to `3`. 
 1) Reproduce the bug and close the program quickly to make the search easier. 
 1) The log can be found in your installation folder under `poe-controller-files/poe-controller.log`. 
 1) Note that you should change it back to `1` for normal play, otherwise the file will keep growing quickly.
@@ -128,17 +125,16 @@ All of your data stays local.
 
 ## The log file is very large!
 The log file `poe-controller-files/poe-controller.log` can be deleted safely. 
-Try decreasing the [verbosity](#verbosity). 
+Try decreasing the [verbosity](#command-line-parameters). 
 
 ## I would like to report a bug!
-Sure! Feel free to [contact me](#how-to-contact), but please 
+Sure! Feel free to [contact me](#how-can-i-contact-you), but please 
 - check the list of existing [issues](https://github.com/Zhadok/poe-controller/issues)
-- [prepare a log file](#how-to-retrieve-log) which was recorded when the bug occured
+- [prepare a log file](#how-do-i-retrieve-a-detailed-log) which was recorded when the bug occured
 
 
 ## How can I contact you?
-<a href="how-to-contact"></a>
-You can reach me on discord under Zhadok#3311. If you would like to report a bug, please prepare and send me the [detailed log file](#how-to-retrieve-log). 
+You can reach me on discord under Zhadok#3311. If you would like to report a bug, please prepare and send me the [detailed log file](#how-do-i-retrieve-a-detailed-log). 
 
 
 # Development setup
@@ -165,15 +161,12 @@ You can set a parameter when starting the jar file:
 For example, you can increase the verbosity by starting the jar file with `-Dverbosity=2`. 
 
 Available parameters: 
-<a href="verbosity"></a>
 - `verbosity` (Default 1): Increase or decrease the logging output. A higher verbosity means more output. 
 - `java.library.path`: Required for locating the native files
 
 
 
 # Gameplay and sample mapping
-<a href="sample-config"></a>
-
 This is the mapping I play PoE with. 
 
 <img src="docs/media/ui-sample-settings.PNG" width="500" />
