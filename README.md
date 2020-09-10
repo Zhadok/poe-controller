@@ -138,7 +138,7 @@ Sure! Feel free to [contact me](#how-to-contact), but please
 
 ## How can I contact you?
 <a href="how-to-contact"></a>
-You can reach me on discord under Zhadok#1234. If you would like to report a bug, please prepare and send me the [detailed log file](#how-to-retrieve-log). 
+You can reach me on discord under Zhadok#3311. If you would like to report a bug, please prepare and send me the [detailed log file](#how-to-retrieve-log). 
 
 
 # Development setup
