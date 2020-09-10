@@ -1,17 +1,194 @@
 {
-	"configs": [{
-		"controllerName": "Default controller name",
-		"characterMovement": {
-			"mouseOffsetCharacterToScreenCenterX": 0,
-			"mouseOffsetCharacterToScreenCenterY": -20,
-			"mouseDistance_ScreenSizeMultiplier": 0.4,
-			"stickThreshold": 0.0001
-		},
-		"mouseMovement": {
-			"mouseMoveSensitivity": 20,
-			"pollRightStickIntervalMS": 10
-		},
-		"mapping": []
-	}]
-		
+  "configs" : [ {
+    "controllerName" : "Default controller name",
+    "mapping" : [ {
+      "mappingKey" : null,
+      "action" : {
+        "key" : null,
+        "mouseAction" : null,
+        "macro" : {
+          "name" : "MacroCharacterMovement",
+          "iconPath" : null,
+          "parameters" : {
+            "axis" : "x"
+          }
+        },
+        "description" : null
+      }
+    }, {
+      "mappingKey" : null,
+      "action" : {
+        "key" : null,
+        "mouseAction" : null,
+        "macro" : {
+          "name" : "MacroCharacterMovement",
+          "iconPath" : null,
+          "parameters" : {
+            "axis" : "y"
+          }
+        },
+        "description" : null
+      }
+    }, {
+      "mappingKey" : null,
+      "action" : {
+        "key" : null,
+        "mouseAction" : null,
+        "macro" : {
+          "name" : "MacroMouseMovement",
+          "iconPath" : null,
+          "parameters" : {
+            "axis" : "x"
+          }
+        },
+        "description" : null
+      }
+    }, {
+      "mappingKey" : null,
+      "action" : {
+        "key" : null,
+        "mouseAction" : null,
+        "macro" : {
+          "name" : "MacroMouseMovement",
+          "iconPath" : null,
+          "parameters" : {
+            "axis" : "y"
+          }
+        },
+        "description" : null
+      }
+    }, {
+      "mappingKey" : null,
+      "action" : {
+        "key" : "Q",
+        "mouseAction" : null,
+        "macro" : null,
+        "description" : null
+      }
+    }, {
+      "mappingKey" : null,
+      "action" : {
+        "key" : "W",
+        "mouseAction" : null,
+        "macro" : null,
+        "description" : null
+      }
+    }, {
+      "mappingKey" : null,
+      "action" : {
+        "key" : "E",
+        "mouseAction" : null,
+        "macro" : null,
+        "description" : null
+      }
+    }, {
+      "mappingKey" : null,
+      "action" : {
+        "key" : "R",
+        "mouseAction" : null,
+        "macro" : null,
+        "description" : null
+      }
+    }, {
+      "mappingKey" : null,
+      "action" : {
+        "key" : null,
+        "mouseAction" : "LEFT_CLICK",
+        "macro" : null,
+        "description" : null
+      }
+    }, {
+      "mappingKey" : null,
+      "action" : {
+        "key" : null,
+        "mouseAction" : "RIGHT_CLICK",
+        "macro" : null,
+        "description" : null
+      }
+    }, {
+      "mappingKey" : null,
+      "action" : {
+        "key" : "SHIFT",
+        "mouseAction" : null,
+        "macro" : null,
+        "description" : null
+      }
+    }, {
+      "mappingKey" : null,
+      "action" : {
+        "key" : "CONTROL",
+        "mouseAction" : null,
+        "macro" : null,
+        "description" : null
+      }
+    }, {
+      "mappingKey" : null,
+      "action" : {
+        "key" : "1",
+        "mouseAction" : null,
+        "macro" : null,
+        "description" : null
+      }
+    }, {
+      "mappingKey" : null,
+      "action" : {
+        "key" : "2",
+        "mouseAction" : null,
+        "macro" : null,
+        "description" : null
+      }
+    }, {
+      "mappingKey" : null,
+      "action" : {
+        "key" : "ESCAPE",
+        "mouseAction" : null,
+        "macro" : null,
+        "description" : null
+      }
+    }, {
+      "mappingKey" : null,
+      "action" : {
+        "key" : "TAB",
+        "mouseAction" : null,
+        "macro" : null,
+        "description" : null
+      }
+    }, {
+      "mappingKey" : null,
+      "action" : {
+        "key" : "Z",
+        "mouseAction" : null,
+        "macro" : null,
+        "description" : null
+      }
+    }, {
+      "mappingKey" : null,
+      "action" : {
+        "key" : "T",
+        "mouseAction" : null,
+        "macro" : null,
+        "description" : null
+      }
+    }, {
+      "mappingKey" : null,
+      "action" : {
+        "key" : "G",
+        "mouseAction" : null,
+        "macro" : null,
+        "description" : null
+      }
+    } ],
+    "characterMovement" : {
+      "mouseOffsetCharacterToScreenCenterX" : 0,
+      "mouseOffsetCharacterToScreenCenterY" : -20,
+      "mouseDistance_ScreenSizeMultiplier" : 0.4,
+      "stickThreshold" : 1.0E-4,
+      "actionsOnStickRelease" : null
+    },
+    "mouseMovement" : {
+      "mouseMoveSensitivity" : 20.0,
+      "stickThreshold" : 0.0,
+      "pollRightStickIntervalMS" : 10
+    }
+  } ]
 }

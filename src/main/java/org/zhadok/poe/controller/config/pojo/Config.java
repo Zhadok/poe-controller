@@ -60,7 +60,7 @@ public class Config {
 		ArrayList<MappingKey> mappingKeys = new ArrayList<>(); 
 		for (Mapping m : getMapping()) {
 			if (mappingKeys.contains(m.getMappingKey())) {
-				throw new RuntimeException("Duplicate mapping with " + m.getMappingKey().toString()); 
+				//throw new RuntimeException("Duplicate mapping with " + m.getMappingKey().toString()); 
 			}
 			mappingKeys.add(m.getMappingKey()); 
 		}

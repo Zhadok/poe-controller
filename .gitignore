@@ -3,6 +3,7 @@
 .project
 .classpath
 sample_settings.json
+sample_settings_old.json
 miglayout-src.zip
 miglayout15-swing.jar
 ~$*.ppt*
