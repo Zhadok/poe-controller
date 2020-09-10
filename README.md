@@ -176,7 +176,7 @@ Available parameters:
 
 This is the mapping I play PoE with. 
 
-<img src="docs/media/ui-sample-settings.png" width="500" />
+<img src="docs/media/ui-sample-settings.PNG" width="500" />
 
 Sample gameplay
 
