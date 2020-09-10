@@ -28,7 +28,7 @@ public class ConfigTest {
 	
 	@BeforeEach
 	void setup() {
-		this.classUnderTest = ConfigManager.getInstance().loadConfigFromFile(new File("src/main/resources/default_settings.json")); 
+		this.classUnderTest = ConfigManager.getInstance().loadConfigFromFile(new File("src/main/resources/empty_settings.json")); 
 	}
 	
 	

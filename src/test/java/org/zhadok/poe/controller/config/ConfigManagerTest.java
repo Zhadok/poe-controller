@@ -24,7 +24,7 @@ public class ConfigManagerTest {
 	@Test
 	void defaultConfigCanBeLoaded() {
 		Config config = classUnderTest.loadConfigFromFile(defaultSettingsFile); 
-		assertEquals(0, config.getMapping().size());
+		assertEquals(19, config.getMapping().size());
 		assertNotNull(config.getControllerName()); 
 	}
 	
@@ -35,7 +35,7 @@ public class ConfigManagerTest {
 		File tempConfigFile = Paths.get(System.getProperty("java.io.tmpdir"), "temp-poe-controller-settings.json").toFile(); 
 		classUnderTest.saveConfig(defaultConfig, tempConfigFile);
 		Config loadedConfig = classUnderTest.loadConfigFromFile(tempConfigFile); 
-		assertEquals(0, loadedConfig.getMapping().size());
+		assertEquals(19, loadedConfig.getMapping().size());
 		assertNotNull(loadedConfig.getControllerName()); 
 		
 		tempConfigFile.delete(); 

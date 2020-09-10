@@ -1,0 +1,18 @@
+{
+  "configs" : [ {
+    "controllerName" : "Default controller name",
+    "mapping" : [],
+	"characterMovement" : {
+      "mouseOffsetCharacterToScreenCenterX" : 0,
+      "mouseOffsetCharacterToScreenCenterY" : -20,
+      "mouseDistance_ScreenSizeMultiplier" : 0.4,
+      "stickThreshold" : 1.0E-4,
+      "actionsOnStickRelease" : null
+    },
+    "mouseMovement" : {
+      "mouseMoveSensitivity" : 20.0,
+      "stickThreshold" : 0.0,
+      "pollRightStickIntervalMS" : 10
+    }
+  } ]
+}
