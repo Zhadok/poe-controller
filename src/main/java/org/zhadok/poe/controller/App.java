@@ -213,6 +213,15 @@ public class App implements Loggable {
 	
 	private ConfigMappingUI startConfigMappingUI() {
 		ConfigMappingUI window = new ConfigMappingUI(this);
+		java.awt.EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					window.initialize(); 
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
 		return window; 
 	}
 	

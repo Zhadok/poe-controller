@@ -97,13 +97,13 @@ public class ConfigMappingUI implements Loggable, ControllerEventListener {
 	public ConfigMappingUI(App app) {
 		this.app = app;
 		this.loadConfigCopy();
-		this.initialize();
 	}
 
 	/**
 	 * Initialize the contents of the frame.
+	 * @wbp.parser.entryPoint 
 	 */
-	private void initialize() {
+	public void initialize() {
 		frame = new JFrame();
 		frame.setTitle("poe-controller");
 		frame.setFocusTraversalKeysEnabled(false); // Otherwise "Tab" does not get picked up when listening
@@ -576,7 +576,9 @@ public class ConfigMappingUI implements Loggable, ControllerEventListener {
 						if (inputEvents.size() >= nEvents) {
 							onInputEventsReceived(inputEvents);
 
-							mapMappingToElement.get(mapping).updateTexts();
+							if (mapMappingToElement.get(mapping) != null) {
+								mapMappingToElement.get(mapping).updateTexts();
+							}
 							enableAllMappingButtons();
 						}
 					});
