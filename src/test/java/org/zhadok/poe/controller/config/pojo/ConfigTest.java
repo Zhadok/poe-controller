@@ -34,27 +34,34 @@ public class ConfigTest {
 	
 	private static Stream<Arguments> provideArgumentsForSanityCheckConfig() {
 	    return Stream.of(
-	    		Arguments.of(Arrays.asList("Button 1", "Button 2", "Button 3"), false),
-	    		Arguments.of(Arrays.asList("Button 1", "Button 1", "Button 3"), true) // Duplicate names should lead to error
-	      );
+	    		Arguments.of(Arrays.asList(
+		    				new MappingKey("Button 1", null, null, false, null), 
+		    				new MappingKey("Button 2", null, null, false, null), 
+		    				new MappingKey("Button 3", null, null, false, null) 
+	    				), false), 
+				Arguments.of(Arrays.asList(
+		    				new MappingKey("Button 1", null, null, false, null),  // Duplicate names should lead to error
+		    				new MappingKey("Button 1", null, null, false, null), 
+		    				new MappingKey("Button 3", null, null, false, null) 
+				), true), 
+	    		Arguments.of(Arrays.asList(null, null), false) // Duplicate entries of null should not lead to an error
+		);
 	}
 	
 	@ParameterizedTest
 	@MethodSource("provideArgumentsForSanityCheckConfig")
-	void sanityCheckConfig(List<String> buttonNames, boolean expectException) {
-		buttonNames.forEach((buttonName) -> {
-			MappingKey mappingKey = new MappingKey(buttonName, null, null, false, null); 
-			
+	void sanityCheckConfig(List<MappingKey> mappingKeys, boolean expectException) {
+		mappingKeys.forEach((mappingKey) -> {
 			Mapping newMapping = new Mapping(); 
 			newMapping.setMappingKey(mappingKey);
-			classUnderTest.getMapping().add(newMapping);
+			classUnderTest.getMapping().add(newMapping); 
 		}); 
-		
+	
 		if (expectException == true) {
-			// assertThrows(Exception.class, () -> classUnderTest.sanityCheckMapping()); 
+			assertThrows(Exception.class, () -> classUnderTest.sanityCheckMapping()); 
 		} else {
 			classUnderTest.sanityCheckMapping();
-			assertEquals(buttonNames.size(), classUnderTest.getMapping().size()) ;
+			assertEquals(mappingKeys.size(), classUnderTest.getMapping().size()) ;
 		}
 	}
 	

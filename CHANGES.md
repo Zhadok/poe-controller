@@ -1,15 +1,15 @@
 # Changes
+- 0.0.10
+    - Sanity check duplicate mappings: Null entries do not lead to errors
 - 0.0.5
     - Fixed a bug where controller events are not properly picked up: Use controller event name, id and value instead of just controller event name to find mappings
     - Added a lot of event logging (for troubleshooting) 
     - Filled the README with content
     - Prepare better default_settings.json
-
 - 0.0.4: When listening for new controller input: 
     - Fixed a bug with the cmd file for starting the jar
     - Character movement: Map point on square to point on unit circle for joysticks
     - Mouse movement: Add a setting for the stick threshold
-
 - 0.0.3: Automated deployment via GitHub Actions
 - 0.0.2: Update deployment and versioning
 - 0.0.1: Initial release
