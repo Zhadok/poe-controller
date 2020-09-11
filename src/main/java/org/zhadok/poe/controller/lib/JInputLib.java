@@ -2,6 +2,8 @@ package org.zhadok.poe.controller.lib;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import org.zhadok.poe.controller.App;
 import org.zhadok.poe.controller.Constants;
@@ -44,9 +46,26 @@ public class JInputLib implements Loggable {
 			if (fileOut.exists() == false) {
 				String resourcePath = "/natives/" + nativeFile;
 				//System.out.println(getClass().getResource(resourcePath));
+				log(1, "Writing file " + resourcePath); 
 				
 				Util.copyFileFromResource(resourcePath, fileOut);
 			}
+			else {
+				log(1, "File already exists: " + fileOut.toPath()); 
+			}
+		}
+	}
+
+	public void checkLibFiles() {
+		String javaLibraryPath = System.getProperty("java.library.path"); 
+		
+		log(1, "java.library.path: " + javaLibraryPath);
+		
+		// Check that each file exists via java.library.path
+		for (String nativeFile : nativeFiles) {
+			Path pathToNativeFile = Paths.get(javaLibraryPath, nativeFile); 
+			File file = pathToNativeFile.toFile();
+			log(1, "Native file exists on library path: " + file.exists() + " (" + pathToNativeFile.toString() + ")");
 		}
 	}
 	

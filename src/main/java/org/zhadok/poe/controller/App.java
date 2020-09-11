@@ -225,7 +225,7 @@ public class App implements Loggable {
 		// This must be passed with -Djava.library.path=...
 		// https://stackoverflow.com/questions/5419039/is-djava-library-path-equivalent-to-system-setpropertyjava-library-path/24988095#24988095
 		// We will set it here so that the development process within IDEs works		
-		System.setProperty("java.library.path", Constants.DIR_LIB.toString());
+//		System.setProperty("java.library.path", Constants.DIR_LIB.toString());
 		Util.ensureProjectDirExists(); 
 		Loggable.writeLogsToFile(Constants.FILE_LOG); 
 		
@@ -233,6 +233,7 @@ public class App implements Loggable {
 		
 		JInputLib lib = new JInputLib();
 		lib.prepare(); 
+		lib.checkLibFiles(); 
 		
 		App app = new App();
 		if (System.getProperty("verbosity") != null) {
