@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeListener;
 
@@ -69,9 +70,15 @@ public class MappingRow extends JPanel {
 	
 	public void updateTexts() {
 		String mappingKeyString = mapping.getMappingKey() != null ? mapping.getMappingKey().toStringUI() : ""; 
-		textInput.setText(mappingKeyString);
 		String actionString = mapping.getAction() != null ? mapping.getAction().toStringUI() : "";
-		textOutput.setText(actionString);
+		
+		SwingUtilities.invokeLater(new Runnable() {
+		    public void run() {
+		    	textInput.setText(mappingKeyString);
+		    	textOutput.setText(actionString);
+		    }
+		});
+		
 	}
 	
 	public void setButtonsEnabled(boolean value) {
