@@ -13,6 +13,7 @@ Play Path of Exile with a controller!
   - [Help, the application froze! Or: The application is not responding as expected!](#help-the-application-froze-or-the-application-is-not-responding-as-expected)
   - [Mappings are not working as expected when playing PoE.](#mappings-are-not-working-as-expected-when-playing-poe)
   - ['java' is not recognized as an internal or external command, operable program or batch file](#java-is-not-recognized-as-an-internal-or-external-command-operable-program-or-batch-file)
+  - [The mouse is moving on its own!](#the-mouse-is-moving-on-its-own)
   - [How can I change a setting without the user interface?](#how-can-i-change-a-setting-without-the-user-interface)
   - [What happens to my data?](#what-happens-to-my-data)
   - [How do I retrieve a detailed log?](#how-do-i-retrieve-a-detailed-log)
@@ -98,6 +99,9 @@ Please try restarting the application.
 
 ## 'java' is not recognized as an internal or external command, operable program or batch file
 Make sure you have [installed Java](https://www.oracle.com/java/technologies/javase-downloads.html) (minimum version 8). I have tested the program with Java 8 and Java 11. You can use `java -version` in a command line to check your installed Java version.
+
+## The mouse is moving on its own! 
+Try increasing the mouse movement stick threshold. The threshold can be set in the input field on the bottom right. 
 
 
 ## How can I change a setting without the user interface?

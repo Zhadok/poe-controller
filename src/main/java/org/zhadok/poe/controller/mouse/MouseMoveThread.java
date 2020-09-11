@@ -25,6 +25,8 @@ public class MouseMoveThread implements Loggable, Runnable {
 	
 	private final MacroMouseMovement macroMouseMovement;
 	private final Robot robot;
+	
+	private Point lastMouseLocation = null; 
 
 	private boolean isRunning; 
 	private boolean isStickReleased = true; 
@@ -41,24 +43,22 @@ public class MouseMoveThread implements Loggable, Runnable {
 		log(1, "Started running MouseMoveThread with robot=" + robot.hashCode()); 
 		this.isRunning = true; 
 		while (this.isRunning) {
-			
-			if (this.isStickAboveThreshold()) {
-				if (this.isStickReleased == true) {
-					this.isStickReleased = false; 
-					log(1, "Stick for mouse moving in use."); 
-				}
-				this.moveMouse();
-			}
-			else {
-				if (this.isStickReleased == false) {
-					log(1, "Stick for mouse moving released."); 
-					this.isStickReleased = true;
-				}
-			}
-			
 			try {
+				if (this.isStickAboveThreshold()) {
+					if (this.isStickReleased == true) {
+						this.isStickReleased = false; 
+						log(1, "Stick for mouse moving in use."); 
+					}
+					this.moveMouse();
+				}
+				else {
+					if (this.isStickReleased == false) {
+						log(1, "Stick for mouse moving released."); 
+						this.isStickReleased = true;
+					}
+				}
 				Thread.sleep(settings.getPollRightStickIntervalMS());
-			} catch (InterruptedException e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
@@ -84,10 +84,15 @@ public class MouseMoveThread implements Loggable, Runnable {
 	}
 	
 	private void moveMouse() {
-		Point currentLocation = Util.getMouseLocation();
 		int dx = (int) (getStickXAxis() * settings.getMouseMoveSensitivity()); 
 		int dy = (int) (getStickYAxis() * settings.getMouseMoveSensitivity()); 
-		robot.mouseMove((int) currentLocation.x + dx, (int) currentLocation.y + dy);
+		
+		Point currentLocation;
+		if ((currentLocation = Util.getMouseLocation()) != null) {
+			lastMouseLocation = currentLocation; 
+		}
+		
+		robot.mouseMove((int) lastMouseLocation.x + dx, (int) lastMouseLocation.y + dy);
 	}
 	
 	

@@ -236,6 +236,9 @@ public class App implements Loggable {
 			App.verbosity = Integer.valueOf(System.getProperty("verbosity")); 
 			app.log(0, "Setting verbosity to " + verbosity);
 		}
+		else {
+			app.log(0, "Setting verbosity to " + verbosity + " (default value)");
+		}
 		app.resetControllerMappingListener();
 		ConfigMappingUI window = app.startConfigMappingUI(); 
 		app.registerEventListener(window);

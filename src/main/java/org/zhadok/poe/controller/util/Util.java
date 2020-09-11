@@ -35,14 +35,10 @@ public class Util {
 	
 	public static Point getMouseLocation() {
 		PointerInfo pointerInfo = MouseInfo.getPointerInfo(); 
-		java.awt.Point location; 
-		if (pointerInfo != null) {
-			location = pointerInfo.getLocation();
+		if (pointerInfo == null) {
+			return null; 
 		}
-		else {
-			Point screenCenter = Util.getScreenCenter(); 
-			location = new java.awt.Point((int) screenCenter.x, (int) screenCenter.y); 
-		}
+		java.awt.Point location = pointerInfo.getLocation(); 
 		return new Point(location.x, location.y); 
 	}
 	

@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
@@ -377,29 +378,50 @@ public class ConfigMappingUI implements Loggable, ControllerEventListener {
 		// Mappings: 
 		// x => "X Axis" or "X-Achse"
 		Map<Component.Identifier.Axis,String> mapIdentifierToComponentName = new HashMap<>(); 
-		final int nEventsToRecord = 50; 
+		Map<Component.Identifier.Axis,Integer> mapIdentifierNumberEvents = new HashMap<>(); 
+		
+		final int nEventsToRecord = 100; 
 		AtomicInteger nEventsRecorded = new AtomicInteger(0); 
 		app.setEventsToBeSkipped(1);
 		app.registerForNextEvents(nEventsToRecord, false, true, (inputEvent) -> {
-			log(1, "Received next event: " + inputEvent + " (analog=" + inputEvent.getComponent().isAnalog() + ")");
-			log(1, inputEvent.getComponent().getIdentifier().getClass().getName());
+			log(2, "Received next event: " + inputEvent + " (analog=" + inputEvent.getComponent().isAnalog() + ")");
+			log(2, inputEvent.getComponent().getIdentifier().getClass().getName());
 			// inputEvent.getComponent().getName() ==> Returns "X Axis", "X Achse", "X-Axis", "X Rotation"
 			// inputEvent.getComponent().getIdentifier() can check if instanceof Axis, and name of identifier is better
 			if (inputEvent.getComponent().getIdentifier() instanceof Component.Identifier.Axis &&
 				inputEvent.getComponent().isAnalog() == true) { 
-					mapIdentifierToComponentName.put((Axis) inputEvent.getComponent().getIdentifier(), 
-							inputEvent.getComponent().getName()); 
+				
+				Axis axis = (Axis) inputEvent.getComponent().getIdentifier(); 
+				
+				mapIdentifierToComponentName.put(axis, inputEvent.getComponent().getName()); 
+				mapIdentifierNumberEvents.compute(axis, (k, v) -> (v == null) ? 1 : v+1); 
 			}
 			if (nEventsRecorded.incrementAndGet() >= nEventsToRecord) {
+				// Remove "dirty" events that were only recorded up to N times
+				// For example, Stadia controller gives one "rz" event when starting the application
+				List<Axis> axesToRemove = mapIdentifierNumberEvents.entrySet().stream()
+						.filter(entry -> entry.getValue() <= 2)
+						.map(entry -> entry.getKey())
+						.collect(Collectors.toList());
+				if (axesToRemove.isEmpty() == false) {
+					log(1, "Removing axesToRemove=" + axesToRemove + ", n events recorded " + mapIdentifierNumberEvents); 
+				}
+				axesToRemove.forEach(axisToRemove -> mapIdentifierToComponentName.remove(axisToRemove));
+				
 				// Check that exactly 2 different events are passed
 				if (mapIdentifierToComponentName.keySet().size() != 2) {
-					String errorMessage = "Error mapping joystick: Did not receive exactly two unique events, instead got " + mapIdentifierToComponentName; 
+					String errorMessage = "Error mapping joystick: Did not receive exactly two unique events, " +
+							"instead got " + mapIdentifierToComponentName + ", n events recorded: " + 
+							mapIdentifierNumberEvents; 
 					log(1, errorMessage); 
 					setStatusText(errorMessage);
 					enableAllMappingButtons();
 					return; 
 				}
 				onMapMovementEventsRecorded(macroName, mapIdentifierToComponentName); 
+			}
+			else {
+				setStatusText((nEventsToRecord - nEventsRecorded.get()) + " events remaining, keep moving the joystick...");
 			}
 		});
 	}

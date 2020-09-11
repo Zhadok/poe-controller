@@ -1,7 +1,11 @@
 # Changes
+- 0.0.11
+    - Bug fix: Mouse is no longer reset to center of screen when moving to bottom of screen
+    - Bug fix: "extra" events caused by the controller during character/mouse movement mapping are ignored
 - 0.0.10
     - Sanity check duplicate mappings: Null entries do not lead to errors
     - Updated README with the Java 64-bit requirement
+    - Use net.java.games.input.librarypath instead of java.library.path for path to native files
 - 0.0.5
     - Fixed a bug where controller events are not properly picked up: Use controller event name, id and value instead of just controller event name to find mappings
     - Added a lot of event logging (for troubleshooting) 
