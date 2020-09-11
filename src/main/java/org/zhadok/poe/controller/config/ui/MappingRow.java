@@ -75,7 +75,13 @@ public class MappingRow extends JPanel {
 		SwingUtilities.invokeLater(new Runnable() {
 		    public void run() {
 		    	textInput.setText(mappingKeyString);
+		    	textInput.revalidate();
+		    	textInput.repaint();
 		    	textOutput.setText(actionString);
+		    	textOutput.revalidate();
+		    	textOutput.repaint();
+		    	revalidate();
+		    	repaint(); 
 		    }
 		});
 		
