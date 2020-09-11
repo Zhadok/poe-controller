@@ -1,5 +1,6 @@
 package org.zhadok.poe.controller;
 import java.awt.AWTException;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +26,16 @@ import net.java.games.input.EventQueue;
  */
 public class App implements Loggable {
 
+	/**
+	 * Setting the path to native files: 
+	 * https://github.com/jinput/jinput/issues/42
+	 */
+	static {
+		String libraryPath = new File("poe-controller-files/lib").getAbsolutePath(); 
+		System.out.println("Setting net.java.games.input.librarypath=" + libraryPath);
+		System.setProperty("net.java.games.input.librarypath", libraryPath);
+	}
+	
 	public static int verbosity = Constants.DEFAULT_VERBOSITY; 
 	public int getVerbosity() {
 		return verbosity; 
@@ -202,15 +213,6 @@ public class App implements Loggable {
 	
 	private ConfigMappingUI startConfigMappingUI() {
 		ConfigMappingUI window = new ConfigMappingUI(this);
-//		java.awt.EventQueue.invokeLater(new Runnable() {
-//			public void run() {
-//				try {
-//					//window.initialize(); 
-//				} catch (Exception e) {
-//					e.printStackTrace();
-//				}
-//			}
-//		});
 		return window; 
 	}
 	
@@ -221,11 +223,6 @@ public class App implements Loggable {
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws AWTException, IOException {
-		// Setting java.library.path programmatically can't be used with jar files
-		// This must be passed with -Djava.library.path=...
-		// https://stackoverflow.com/questions/5419039/is-djava-library-path-equivalent-to-system-setpropertyjava-library-path/24988095#24988095
-		// We will set it here so that the development process within IDEs works		
-//		System.setProperty("java.library.path", Constants.DIR_LIB.toString());
 		Util.ensureProjectDirExists(); 
 		Loggable.writeLogsToFile(Constants.FILE_LOG); 
 		
@@ -233,7 +230,6 @@ public class App implements Loggable {
 		
 		JInputLib lib = new JInputLib();
 		lib.prepare(); 
-		lib.checkLibFiles(); 
 		
 		App app = new App();
 		if (System.getProperty("verbosity") != null) {
@@ -243,6 +239,12 @@ public class App implements Loggable {
 		app.resetControllerMappingListener();
 		ConfigMappingUI window = app.startConfigMappingUI(); 
 		app.registerEventListener(window);
+		
+		if (Util.isJava32Bit()) {
+			app.log(1, "WARNING: You appear to be using 32-bit Java. If the program crashes please try " + 
+					   "uninstalling 32-bit Java and installing 64-bit Java."); 
+		}
+		
 		app.startPolling(); 
 	}
 

@@ -15,7 +15,7 @@ echo Starting poe-controller...
 echo Starting jar file "%jarFileName%"
 echo --------------------------
 
-java -D"java.library.path"="./poe-controller-files/lib" -Dverbosity=1 -jar "%jarFileName%"
+java -Dverbosity=1 -jar "%jarFileName%"
 
 if errorlevel 1 set /p DUMMY=Hit ENTER to continue...
 

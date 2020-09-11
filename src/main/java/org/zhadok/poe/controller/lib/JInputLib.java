@@ -66,6 +66,9 @@ public class JInputLib implements Loggable {
 			Path pathToNativeFile = Paths.get(javaLibraryPath, nativeFile); 
 			File file = pathToNativeFile.toFile();
 			log(1, "Native file exists on library path: " + file.exists() + " (" + pathToNativeFile.toString() + ")");
+			
+			System.loadLibrary(nativeFile); 
+			log(1, "Library successfully loaded."); 
 		}
 	}
 	

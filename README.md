@@ -7,7 +7,7 @@ Play Path of Exile with a controller!
 - [Requirements](#requirements)
 - [Installation](#installation)
 - [Setup](#setup)
-  - [Map controller joysticks to character or mouse movement](#map-controller-joysticks-to-character-or-mouse-movement)
+  - [Map controller joysticks to character and mouse movement](#map-controller-joysticks-to-character-and-mouse-movement)
   - [Map controller buttons to keyboard or mouse outputs](#map-controller-buttons-to-keyboard-or-mouse-outputs)
 - [FAQ & Troubleshooting](#faq--troubleshooting)
   - [Help, the application froze! Or: The application is not responding as expected!](#help-the-application-froze-or-the-application-is-not-responding-as-expected)
@@ -39,7 +39,7 @@ Character movement:<br>Joystick moves mouse in<br> circle around character  |  M
 
 
 # Requirements
-- Java (minimum version 8)
+- [Java 64-bit](https://www.java.com/en/download/manual.jsp) (minimum version 8): Make sure you chose the 64-bit version
 - A controller
 
 # Installation
@@ -55,15 +55,19 @@ See [here](#gameplay-and-sample-mapping) for an example of a full mapping.
 <img src="docs/media/ui-screenshot.png" width="500" />
 
 
-## Map controller joysticks to character or mouse movement
+## Map controller joysticks to character and mouse movement
 
-- Click on (2): `Map character movement` or (3): `Map mouse movement`.
-- Move the joystick in a circle.
-- Two mappings should be assigned with the output `MacroCharacterMovement` (6) or `MacroMouseMovement` (7)
+- Click on (2): `Map character movement` 
+  - Move the joystick in a circle.
+  - Two mappings should be assigned with the output `MacroCharacterMovement` (6)
+- Click on (3): `Map mouse movement`.
+  - Move the joystick in a circle.
+  - Two mappings should be assigned with the output `MacroMouseMovement` (7)
 - Click on (8): `Save config`. 
 - **Note**: poe-controller will do its best to automatically recognize which events belong to which controller axis. **However**: If the automatic mapping fails please retry. If it still fails please try [manually changing settings.](#how-can-i-change-a-setting-without-the-user-interface)
 
 ## Map controller buttons to keyboard or mouse outputs
+Repeat for each controller button you want to map: 
 
 - Click on (1): `Add new mapping`
 - Click on (4): `Map input`

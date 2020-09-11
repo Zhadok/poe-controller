@@ -111,7 +111,21 @@ public class Util {
 				"Java Virtual Machine specification name: " + System.getProperty("java.vm.specification.name"),
 				"Java Virtual Machine implementation version: " + System.getProperty("java.vm.version"),
 				"Java Virtual Machine implementation vendor: " + System.getProperty("java.vm.vendor"),
-				"Java Virtual Machine implementation name: " + System.getProperty("java.vm.name")); 
+				"Java Virtual Machine implementation name: " + System.getProperty("java.vm.name"),
+				"Java Virtual Machine 32 bit or 64 bit: " + System.getProperty("sun.arch.data.model")); 
+	}
+	
+	/**
+	 * https://stackoverflow.com/questions/2062020/how-can-i-tell-if-im-running-in-64-bit-jvm-or-32-bit-jvm-from-within-a-program
+	 * @return
+	 */
+	public static boolean isJava32Bit() {
+		try {
+			int bits = Integer.parseInt(System.getProperty("sun.arch.data.model"));
+			return bits == 32; 
+		} catch (Exception e) {
+			return false; 
+		}
 	}
 
 }
