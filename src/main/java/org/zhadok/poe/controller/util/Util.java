@@ -17,6 +17,7 @@ import java.nio.file.Files;
 import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Properties;
 
 import org.zhadok.poe.controller.Constants;
 
@@ -102,13 +103,23 @@ public class Util {
 	}
 
 	public static List<String> getJavaRuntime() {
+		String pomVersion; 
+		try {
+			final Properties properties = new Properties();
+			properties.load(Util.class.getClassLoader().getResourceAsStream("project.properties"));
+			pomVersion = properties.getProperty("version");
+		} catch (Exception e) {
+			pomVersion = "Unknown"; 
+		}
+		
 		return Arrays.asList("Java Virtual Machine specification version: " + System.getProperty("java.vm.specification.version"),
 				"Java Virtual Machine specification vendor: " + System.getProperty("java.vm.specification.vendor"),
 				"Java Virtual Machine specification name: " + System.getProperty("java.vm.specification.name"),
 				"Java Virtual Machine implementation version: " + System.getProperty("java.vm.version"),
 				"Java Virtual Machine implementation vendor: " + System.getProperty("java.vm.vendor"),
 				"Java Virtual Machine implementation name: " + System.getProperty("java.vm.name"),
-				"Java Virtual Machine 32 bit or 64 bit: " + System.getProperty("sun.arch.data.model")); 
+				"Java Virtual Machine 32 bit or 64 bit: " + System.getProperty("sun.arch.data.model"),
+				"poe-controller version: " + pomVersion); 
 	}
 	
 	/**

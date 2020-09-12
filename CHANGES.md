@@ -1,4 +1,7 @@
 # Changes
+- 0.0.12
+    - Try to make the UI a little nicer looking
+    - Add version of poe-controller to log output when starting the application
 - 0.0.11
     - Bug fix: Mouse is no longer reset to center of screen when moving to bottom of screen
     - Bug fix: "extra" events caused by the controller during character/mouse movement mapping are ignored

@@ -27,6 +27,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -67,6 +69,7 @@ public class ConfigMappingUI implements Loggable, ControllerEventListener {
 	private JPanel panelBottom;
 	private JButton buttonSaveConfig;
 	private JButton buttonResetConfig;
+	private JButton buttonRemoveAllMappings; 
 	private JPanel panelEast;
 	private JButton buttonAddNewMapping;
 	private JTextArea textAreaLastInputDetected;
@@ -91,6 +94,12 @@ public class ConfigMappingUI implements Loggable, ControllerEventListener {
 	private JLabel labelMouseMovementStickThreshold;
 	private JNumberTextField textFieldMouseMovementStickThreshold;
 
+	public static final Color COLOR_PANEL_BACKGROUND = new Color(240, 248, 255); 
+	public static final Color COLOR_BUTTON_BACKGROUND = new Color(240, 250, 255);
+	public static final int TEXT_PADDING = 7; 
+	public static final Font FONT_BIG_BUTTONS = new Font("Tahoma", Font.PLAIN, 22);
+	
+	
 	/**
 	 * Create the application.
 	 */
@@ -104,15 +113,24 @@ public class ConfigMappingUI implements Loggable, ControllerEventListener {
 	 * @wbp.parser.entryPoint 
 	 */
 	public void initialize() {
+		try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
+				| UnsupportedLookAndFeelException e) {
+			log(1, "Warning, while setting UI look and feel: " + e.getMessage());
+		}
+		
 		frame = new JFrame();
 		frame.setTitle("poe-controller");
 		frame.setFocusTraversalKeysEnabled(false); // Otherwise "Tab" does not get picked up when listening
 		
-		URL iconUrl = getClass().getResource("/img/icon-console.png"); 
+		frame.getContentPane().setBackground(COLOR_PANEL_BACKGROUND); 
+		
+		URL iconUrl = getClass().getResource("/img/icon-controller.png"); 
 		frame.setIconImage(new ImageIcon(iconUrl).getImage());
 		
 		int paddingY = 100;
-		int frameWidth = (int) (0.6 * Util.getScreenSize().width); 
+		int frameWidth = (int) (0.9 * Util.getScreenSize().width); 
 		int paddingX = (Util.getScreenSize().width - frameWidth) / 2; 
 		
 		frame.setBounds(paddingX, paddingY, frameWidth, Util.getScreenSize().height - 2 * paddingY);
@@ -124,6 +142,7 @@ public class ConfigMappingUI implements Loggable, ControllerEventListener {
 		frame.getContentPane().add(labelListeningStatus, BorderLayout.NORTH);
 
 		panelMappings = new JPanel();
+		panelMappings.setBackground(COLOR_PANEL_BACKGROUND);
 		JPanel panelMappingsContainer = new JPanel(new BorderLayout()); 
 		scrollPaneMappings = new JScrollPane(panelMappingsContainer, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
 				JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -133,31 +152,40 @@ public class ConfigMappingUI implements Loggable, ControllerEventListener {
 		panelMappings.setLayout(gridBagLayout);
 		// Add this to the NORTH of the container, else it is centered in the scroll pane
 		panelMappingsContainer.add(panelMappings, BorderLayout.NORTH); 
+		panelMappingsContainer.setBackground(COLOR_PANEL_BACKGROUND);
 		
 		frame.getContentPane().add(scrollPaneMappings, BorderLayout.CENTER);
 
 		panelBottom = new JPanel();
 		panelBottom.setBorder(new EmptyBorder(5, 5, 5, 5));
 		frame.getContentPane().add(panelBottom, BorderLayout.SOUTH);
-		panelBottom.setLayout(new GridLayout(0, 2, 0, 0));
-
-		buttonSaveConfig = new JButton("Save config");
-		buttonSaveConfig.setFont(new Font("Tahoma", Font.PLAIN, 22));
+		panelBottom.setLayout(new GridLayout(0, 3, 0, 0));
+		panelBottom.setBackground(COLOR_PANEL_BACKGROUND);
+		
+		buttonSaveConfig = new JButtonWithIcon("/img/icon-save.png", "Save config", 
+				FONT_BIG_BUTTONS, TEXT_PADDING, 1);
 		buttonSaveConfig.addActionListener((event) -> this.saveConfig());
 		panelBottom.add(buttonSaveConfig);
 
-		buttonResetConfig = new JButton("Reset config");
-		buttonResetConfig.setFont(new Font("Tahoma", Font.PLAIN, 22));
+		buttonResetConfig = new JButtonWithIcon("/img/icon-delete.png", "Reset config", 
+				FONT_BIG_BUTTONS, TEXT_PADDING, 1);
 		buttonResetConfig.addActionListener((event) -> this.resetConfig());
 		panelBottom.add(buttonResetConfig);
 
+		buttonRemoveAllMappings = new JButtonWithIcon("/img/icon-delete-all.png", "Delete all mappings", 
+				FONT_BIG_BUTTONS, TEXT_PADDING, 1);
+		buttonRemoveAllMappings.addActionListener((event) -> this.removeAllMappings());
+		panelBottom.add(buttonRemoveAllMappings);
+		
 		panelEast = new JPanel();
 		panelEast.setBorder(new EmptyBorder(5, 5, 5, 5));
 		frame.getContentPane().add(panelEast, BorderLayout.EAST);
-
-		buttonAddNewMapping = new JButton("Add new mapping");
-		buttonAddNewMapping.setFont(new Font("Tahoma", Font.PLAIN, 22));
+		panelEast.setBackground(COLOR_PANEL_BACKGROUND);
+		
+		buttonAddNewMapping = new JButtonWithIcon("/img/icon-add.png", "Add new mapping", FONT_BIG_BUTTONS, TEXT_PADDING, 1);
 		buttonAddNewMapping.addActionListener((event) -> this.addNewConfigMapping());
+		buttonAddNewMapping.setBackground(COLOR_BUTTON_BACKGROUND);
+		buttonAddNewMapping.setOpaque(true);
 		panelEast.setLayout(new BorderLayout(0, 0));
 
 		textAreaLastInputDetected = new JTextArea();
@@ -172,13 +200,13 @@ public class ConfigMappingUI implements Loggable, ControllerEventListener {
 		panelEastTopButtons.setLayout(new GridLayout(0, 1, 0, 0));
 		panelEastTopButtons.add(buttonAddNewMapping);
 		
-		buttonMapCharacterMovement = new JButton("Map character movement");
-		buttonMapCharacterMovement.setFont(new Font("Tahoma", Font.PLAIN, 22));
+		buttonMapCharacterMovement = new JButtonWithIcon("/img/icon-controller.png", "Map character movement", 
+				FONT_BIG_BUTTONS, TEXT_PADDING, 1);
 		buttonMapCharacterMovement.addActionListener((event) -> startMapStickListener(MacroName.MacroCharacterMovement)); 
 		panelEastTopButtons.add(buttonMapCharacterMovement);
 		
-		buttonMapMouseMovement = new JButton("Map mouse movement");
-		buttonMapMouseMovement.setFont(new Font("Tahoma", Font.PLAIN, 22));
+		buttonMapMouseMovement = new JButtonWithIcon("/img/icon-controller.png", "Map mouse movement", 
+				FONT_BIG_BUTTONS, TEXT_PADDING, 1);
 		buttonMapMouseMovement.addActionListener((event) -> startMapStickListener(MacroName.MacroMouseMovement)); 
 		
 		panelEastTopButtons.add(buttonMapMouseMovement);
@@ -186,6 +214,7 @@ public class ConfigMappingUI implements Loggable, ControllerEventListener {
 		panelEastBottom = new JPanel();
 		panelEast.add(panelEastBottom, BorderLayout.SOUTH);
 		panelEastBottom.setLayout(new BoxLayout(panelEastBottom, BoxLayout.Y_AXIS));
+		panelEastBottom.setBackground(COLOR_PANEL_BACKGROUND);
 		
 		panelEastBottomCharacterMovementTitle = new JPanel();
 		panelEastBottom.add(panelEastBottomCharacterMovementTitle);
@@ -194,10 +223,12 @@ public class ConfigMappingUI implements Loggable, ControllerEventListener {
 		labelCharacterMovementSettingsTitle.setHorizontalAlignment(SwingConstants.CENTER);
 		labelCharacterMovementSettingsTitle.setFont(new Font("Tahoma", Font.PLAIN, 22));
 		panelEastBottomCharacterMovementTitle.add(labelCharacterMovementSettingsTitle);
+		panelEastBottomCharacterMovementTitle.setBackground(COLOR_PANEL_BACKGROUND);
 		
 		panelCharacterMovementRadius = new JPanel();
 		panelEastBottom.add(panelCharacterMovementRadius);
 		panelCharacterMovementRadius.setLayout(new BorderLayout(0, 0));
+		panelCharacterMovementRadius.setBackground(COLOR_PANEL_BACKGROUND);
 		
 		labelCharacterMovementRadius = new JLabel("<html>\r\nRadius of circle for character movement: <br>\r\n- Use a value between 0 and 0.5 <br>\r\n- If not sure, try 0.4 <br>\r\n- Hover over the input field for more information\r\n</html>");
 		labelCharacterMovementRadius.setToolTipText("");
@@ -220,10 +251,10 @@ public class ConfigMappingUI implements Loggable, ControllerEventListener {
 		
 		panelCharacterMovementRadius.add(textFieldCharacterMovementRadius, BorderLayout.EAST);
 		
-		
 		panelOffsetCharacterScreenCenterY = new JPanel();
 		panelEastBottom.add(panelOffsetCharacterScreenCenterY);
 		panelOffsetCharacterScreenCenterY.setLayout(new BorderLayout(0, 0));
+		panelOffsetCharacterScreenCenterY.setBackground(COLOR_PANEL_BACKGROUND);
 		
 		labelOffsetCharacterScreenCenterY = new JLabel("<html>\r\nDistance from middle of screen to middle of character (in pixels):<br>\r\n- Used as offset for the radius of the character movement<br>\r\n- Should be about half the height of your character\r\n</html>");
 		panelOffsetCharacterScreenCenterY.add(labelOffsetCharacterScreenCenterY, BorderLayout.CENTER);
@@ -243,6 +274,7 @@ public class ConfigMappingUI implements Loggable, ControllerEventListener {
 		panelEastBottomMouseMovementTitle = new JPanel();
 		panelEastBottom.add(panelEastBottomMouseMovementTitle);
 		panelEastBottomMouseMovementTitle.setLayout(new BorderLayout(0, 0));
+		panelEastBottomMouseMovementTitle.setBackground(COLOR_PANEL_BACKGROUND);
 		
 		labelMouseMovementTitle = new JLabel("Mouse movement settings");
 		labelMouseMovementTitle.setHorizontalAlignment(SwingConstants.CENTER);
@@ -252,6 +284,7 @@ public class ConfigMappingUI implements Loggable, ControllerEventListener {
 		panelMouseMovementSensitivity = new JPanel();
 		panelEastBottom.add(panelMouseMovementSensitivity);
 		panelMouseMovementSensitivity.setLayout(new BorderLayout(0, 0));
+		panelMouseMovementSensitivity.setBackground(COLOR_PANEL_BACKGROUND);
 		
 		labelMouseMovementSensitivity = new JLabel("<html>\r\nMouse movement sensitivity: <br>\r\n- A higher number means the cursor moves faster\r\n</html>");
 		panelMouseMovementSensitivity.add(labelMouseMovementSensitivity, BorderLayout.CENTER);
@@ -270,6 +303,7 @@ public class ConfigMappingUI implements Loggable, ControllerEventListener {
 		panelMouseMovementStickThreshold = new JPanel();
 		panelEastBottom.add(panelMouseMovementStickThreshold);
 		panelMouseMovementStickThreshold.setLayout(new BorderLayout(0, 0));
+		panelMouseMovementStickThreshold.setBackground(COLOR_PANEL_BACKGROUND);
 		
 		labelMouseMovementStickThreshold = new JLabel("<html>\r\nMouse movement stick threshold: <br>\r\n- Set a value between 0 and 1<br>\r\n- The mouse will be moved when the stick value is above this value<br>\r\n- If your mouse moves without using the mapped stick, try setting this value higher\r\n</html>");
 		panelMouseMovementStickThreshold.add(labelMouseMovementStickThreshold, BorderLayout.CENTER);
@@ -305,7 +339,7 @@ public class ConfigMappingUI implements Loggable, ControllerEventListener {
 
 	private void addConfigMappingElement(Mapping mapping, int mappingIndex) {
 			MappingRow panelMapping = new MappingRow(mapping, new NextInputMappingHandler(mapping),
-					(event) -> startOutputListener(mapping), (event) -> startMacroSelectionListener(mapping),
+					(event) -> startOutputListener(mapping),
 					(deleteEvent) -> removeConfigMapping(mapping));
 	
 			mapMappingToElement.put(mapping, panelMapping);
@@ -353,22 +387,6 @@ public class ConfigMappingUI implements Loggable, ControllerEventListener {
 		frame.requestFocus();
 	}
 
-	private String startMacroSelectionListener(Mapping mapping) {
-		String[] options = new String[] {
-				MacroName.MacroCharacterMovement + " (x axis)",
-				MacroName.MacroCharacterMovement + " (y axis)",
-				MacroName.MacroMouseMovement + " (x axis)",
-				MacroName.MacroMouseMovement + " (y axis)",
-				MacroName.MacroExitProgram.name()
-		}; 
-		
-		String input = (String) JOptionPane.showInputDialog(frame, "Select a macro...", "Macro selection",
-				JOptionPane.INFORMATION_MESSAGE, null, 
-				options, // Array of choices
-				options[0]); // Initial choice
-		return input;
-	}
-	
 	private void startMapStickListener(MacroName macroName) {
 		disableAllMappingButtons();
 		String message = "Listening for controller joystick... Move the joystick around in circles"; 
@@ -464,7 +482,7 @@ public class ConfigMappingUI implements Loggable, ControllerEventListener {
 	 * @return Index of the removed component
 	 */
 	private int removeConfigMappingElement(Mapping mapping) {
-		log(1, "removing mapping: " + mapping);
+		log(1, "Removing mapping: " + mapping);
 		JPanel panelMapping = this.mapMappingToElement.get(mapping);
 		int mappingIndex = Arrays.asList(panelMappings.getComponents()).indexOf(panelMapping);
 
@@ -511,6 +529,20 @@ public class ConfigMappingUI implements Loggable, ControllerEventListener {
 		this.validateConfig(); 
 	}
 
+
+	private void removeAllMappings() {
+		// 0=ok, 2=cancel
+		int confirmation = JOptionPane.showConfirmDialog(frame, "This will delete all mappings. Are you sure?",
+				"Delete all mappings", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE); 
+		if (confirmation == 0) {
+			log(1, "Removing all mappings..."); 
+			this.configCopy.getMapping().forEach(mapping -> {
+				removeConfigMappingElement(mapping);
+			});
+			this.configCopy.getMapping().clear();
+		}
+	}
+	
 	private void loadConfigCopy() {
 		this.configCopy = ConfigManager.getInstance().loadConfigFromFile(); 
 	}

@@ -5,7 +5,7 @@
 
 	<groupId>poe-controller</groupId>
 	<artifactId>poe-controller</artifactId>
-	<version>0.0.11</version>
+	<version>0.0.12</version>
 	<packaging>jar</packaging>
 
 	<name>poe-controller</name>
@@ -83,6 +83,17 @@
 	</dependencies>
 
 	<build>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>false</filtering>
+			</resource>
+			<resource>
+				<directory>src/main/resources-filtered</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
+	
 		<plugins>
 			<plugin>
 				<groupId>com.googlecode.mavennatives</groupId>

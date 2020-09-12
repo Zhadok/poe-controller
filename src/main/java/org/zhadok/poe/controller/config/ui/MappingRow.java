@@ -1,14 +1,18 @@
 package org.zhadok.poe.controller.config.ui;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
+import javax.swing.border.Border;
+import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
 import javax.swing.event.ChangeListener;
 
 import org.zhadok.poe.controller.config.pojo.Mapping;
@@ -21,41 +25,45 @@ public class MappingRow extends JPanel {
 	
 	private JButton buttonStartMappingInput;
 	private JButton buttonStartMappingOutput; 
-	private JButton buttonAssignMacroOutput; 
 	private JButton buttonDeleteMapping;
 	
-	private JTextField textInput; 
-	private JTextField textOutput; 
+	private JLabel textInput; 
+	private JLabel textOutput; 
 	
 	public MappingRow(Mapping mapping, 
 			ChangeListener startMappingInputListener,
 			ActionListener startMappingOutputListener,
-			ActionListener assignMacroListener, 
 			ActionListener deleteListener) {
 		super(new FlowLayout(FlowLayout.LEFT));
+		this.setBackground(ConfigMappingUI.COLOR_PANEL_BACKGROUND);
 		this.mapping = mapping;
 		
-		buttonStartMappingInput = new JButton("Map input");
+		int textInputWidth = 150; 
+		int textOutputWidth = 250; 
+		int textPadding = ConfigMappingUI.TEXT_PADDING; 
+		
+		buttonStartMappingInput = new JButtonWithIcon("/img/icon-controller.png", "Map input", textPadding);
 		buttonStartMappingInput.addChangeListener(startMappingInputListener);
 		
-		buttonStartMappingOutput = new JButton("Map output");
+		buttonStartMappingOutput = new JButtonWithIcon("/img/icon-mouse-keyboard.png", "Map output", textPadding, 2);
 		buttonStartMappingOutput.addActionListener(startMappingOutputListener);
 		
-		buttonAssignMacroOutput = new JButton("Assign macro"); 
-		buttonAssignMacroOutput.addActionListener(assignMacroListener);
+		Border border = new LineBorder(Color.BLACK, 1, true); 
+		Border borderTextPadding = new EmptyBorder(textPadding, textPadding, textPadding, textPadding);
 		
-		textInput = new JTextField();
-		textInput.setEnabled(false);
-		textInput.setDisabledTextColor(Color.BLACK);
-		textInput.setBorder(new EmptyBorder(4, 4, 4, 4));
+		textInput = new JLabel(" "); 
+		textInput.setBorder(new CompoundBorder(border, borderTextPadding));
+		textInput.setBackground(Color.WHITE);
+		textInput.setOpaque(true);
+		textInput.setPreferredSize(new Dimension(textInputWidth, textInput.getFont().getSize() + 2*textPadding));
 		
-		textOutput = new JTextField();
-		textOutput.setEnabled(false);
-		textOutput.setDisabledTextColor(Color.BLACK);
-		textOutput.setBorder(new EmptyBorder(4, 4, 4, 4));
+		textOutput = new JLabel(" "); 
+		textOutput.setBorder(new CompoundBorder(border, borderTextPadding));
+		textOutput.setBackground(Color.WHITE);
+		textOutput.setOpaque(true);
+		textOutput.setPreferredSize(new Dimension(textOutputWidth, textOutput.getFont().getSize() + 2*textPadding));
 		
-		buttonDeleteMapping = new JButton("X");
-		buttonDeleteMapping.setForeground(Color.RED);
+		buttonDeleteMapping = new JButtonWithIcon("/img/icon-delete.png", "", textPadding);
 		buttonDeleteMapping.addActionListener(deleteListener); 
 		
 		this.updateTexts();
@@ -69,8 +77,8 @@ public class MappingRow extends JPanel {
 	}
 	
 	public void updateTexts() {
-		String mappingKeyString = mapping.getMappingKey() != null ? mapping.getMappingKey().toStringUI() : ""; 
-		String actionString = mapping.getAction() != null ? mapping.getAction().toStringUI() : "";
+		String mappingKeyString = mapping.getMappingKey() != null ? mapping.getMappingKey().toStringUI() : " "; 
+		String actionString = mapping.getAction() != null ? mapping.getAction().toStringUI() : " ";
 		
 		SwingUtilities.invokeLater(new Runnable() {
 		    public void run() {
