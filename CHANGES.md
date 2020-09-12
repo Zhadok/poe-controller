@@ -1,4 +1,6 @@
 # Changes
+- 0.0.13
+    - Application default size bigger, allow horizontal scrolling as needed
 - 0.0.12
     - Try to make the UI a little nicer looking
     - Add version of poe-controller to log output when starting the application

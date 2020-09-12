@@ -129,11 +129,12 @@ public class ConfigMappingUI implements Loggable, ControllerEventListener {
 		URL iconUrl = getClass().getResource("/img/icon-controller.png"); 
 		frame.setIconImage(new ImageIcon(iconUrl).getImage());
 		
-		int paddingY = 100;
-		int frameWidth = (int) (0.9 * Util.getScreenSize().width); 
+		int frameHeight = (int) (0.90 * Util.getScreenSize().height);
+		int frameWidth = (int) (0.90 * Util.getScreenSize().width); 
 		int paddingX = (Util.getScreenSize().width - frameWidth) / 2; 
+		int paddingY = (Util.getScreenSize().height - frameHeight) / 2; 
 		
-		frame.setBounds(paddingX, paddingY, frameWidth, Util.getScreenSize().height - 2 * paddingY);
+		frame.setBounds(paddingX, paddingY, frameWidth, frameHeight);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		labelListeningStatus = new JLabel("Listening status");
@@ -144,8 +145,8 @@ public class ConfigMappingUI implements Loggable, ControllerEventListener {
 		panelMappings = new JPanel();
 		panelMappings.setBackground(COLOR_PANEL_BACKGROUND);
 		JPanel panelMappingsContainer = new JPanel(new BorderLayout()); 
-		scrollPaneMappings = new JScrollPane(panelMappingsContainer, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
-				JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		scrollPaneMappings = new JScrollPane(panelMappingsContainer, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		//panelMappings.setLayout(new BoxLayout(panelMappings, BoxLayout.X_AXIS));
 //		panelMappings.setLayout(new WrapLayout(FlowLayout.LEFT));
 		GridBagLayout gridBagLayout = new GridBagLayout(); 
