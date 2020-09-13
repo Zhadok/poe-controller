@@ -1,5 +1,5 @@
 # Changes
-- 0.0.16
+- 0.1.0
     - Add cancel button while listening for next controller input/output
     - App window remembers resizing between restarts
     - Mouse left press and mouse left release more actively in case there are other event sources
