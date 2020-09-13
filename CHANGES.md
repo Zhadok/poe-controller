@@ -1,4 +1,7 @@
 # Changes
+- 0.0.14
+    - Add poe-controller version to application title
+    - Change default start method via .jar (not .cmd)
 - 0.0.13
     - Application default size bigger, allow horizontal scrolling as needed
 - 0.0.12

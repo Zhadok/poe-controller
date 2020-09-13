@@ -103,6 +103,17 @@ public class Util {
 	}
 
 	public static List<String> getJavaRuntime() {
+		return Arrays.asList("Java Virtual Machine specification version: " + System.getProperty("java.vm.specification.version"),
+				"Java Virtual Machine specification vendor: " + System.getProperty("java.vm.specification.vendor"),
+				"Java Virtual Machine specification name: " + System.getProperty("java.vm.specification.name"),
+				"Java Virtual Machine implementation version: " + System.getProperty("java.vm.version"),
+				"Java Virtual Machine implementation vendor: " + System.getProperty("java.vm.vendor"),
+				"Java Virtual Machine implementation name: " + System.getProperty("java.vm.name"),
+				"Java Virtual Machine 32 bit or 64 bit: " + System.getProperty("sun.arch.data.model"),
+				"poe-controller version: " + getPomVersion()); 
+	}
+	
+	public static String getPomVersion() {
 		String pomVersion; 
 		try {
 			final Properties properties = new Properties();
@@ -111,15 +122,7 @@ public class Util {
 		} catch (Exception e) {
 			pomVersion = "Unknown"; 
 		}
-		
-		return Arrays.asList("Java Virtual Machine specification version: " + System.getProperty("java.vm.specification.version"),
-				"Java Virtual Machine specification vendor: " + System.getProperty("java.vm.specification.vendor"),
-				"Java Virtual Machine specification name: " + System.getProperty("java.vm.specification.name"),
-				"Java Virtual Machine implementation version: " + System.getProperty("java.vm.version"),
-				"Java Virtual Machine implementation vendor: " + System.getProperty("java.vm.vendor"),
-				"Java Virtual Machine implementation name: " + System.getProperty("java.vm.name"),
-				"Java Virtual Machine 32 bit or 64 bit: " + System.getProperty("sun.arch.data.model"),
-				"poe-controller version: " + pomVersion); 
+		return pomVersion; 
 	}
 	
 	/**

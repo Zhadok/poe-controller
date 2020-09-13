@@ -46,7 +46,7 @@ Character movement:<br>Joystick moves mouse in<br> circle around character  |  M
 # Installation
 - Download the latest release [here](https://github.com/Zhadok/poe-controller/releases)
 - Unpack `poe-controller-{version}.zip` to your folder of choice
-- Execute the file `start-poe-controller.cmd`
+- Execute the file `poe-controller-{version}.jar`
 
 # Setup
 This section describes how to map controller inputs to keyboard/mouse outputs. 
@@ -125,15 +125,14 @@ All of your data stays local.
 
 
 ## How do I retrieve a detailed log?
-1) The application can be started with different levels of [verbosity](#command-line-parameters). Open the file `start-poe-controller.cmd` and change the number in `-Dverbosity=1` to `3`. 
-1) Reproduce the bug and close the program quickly to make the search easier. 
-1) The log can be found in your installation folder under `poe-controller-files/poe-controller.log`. 
-1) Note that you should change it back to `1` for normal play, otherwise the file will keep growing quickly.
+1) Start the file `start-poe-controller-with-log.cmd`. 
+2) (Optional: The application can be started with different levels of [verbosity](#command-line-parameters). You can change the verbosity by opening the `.cmd` file and changing the number in `-Dverbosity=3`.) 
+3) Reproduce the bug. 
+4) The log can be found in your installation folder under `poe-controller-files/poe-controller.log`. 
 
 
 ## The log file is very large!
 The log file `poe-controller-files/poe-controller.log` can be deleted safely. 
-Try decreasing the [verbosity](#command-line-parameters). 
 
 ## I would like to report a bug!
 Sure! Feel free to [contact me](#how-can-i-contact-you), but please 
@@ -158,7 +157,8 @@ Then, run the class `org.zhadok.poe.controller.App`.
 Run the following commands to package and start the jar file (remember to insert the correct version): 
 ```
 mvn clean nativedependencies:copy package
-java -D"java.library.path"="./poe-controller-files/lib" -jar target/poe-controller-{version}.jar
+cd target/
+java -jar target/poe-controller-{version}.jar
 ```
 
 ## Command line parameters
@@ -169,7 +169,7 @@ You can set a parameter when starting the jar file:
 For example, you can increase the verbosity by starting the jar file with `-Dverbosity=2`. 
 
 Available parameters: 
-- `verbosity` (Default 1): Increase or decrease the logging output. A higher verbosity means more output. 
+- `verbosity` (Default 0): Increase or decrease the logging output. A higher verbosity means more output. 
 - `java.library.path`: Required for locating the native files
 
 
@@ -190,5 +190,5 @@ Apache License Version 2.0
 # Open source software and attributions
 - [JInput](https://jinput.github.io/jinput/): Copyright 2019 jinput
 - Controller icon made by [Good Ware](https://www.flaticon.com/authors/good-ware") from [Flaticon](https://www.flaticon.com/)
-
+- Other icons are from [material design](https://material.io/resources/icons)
 

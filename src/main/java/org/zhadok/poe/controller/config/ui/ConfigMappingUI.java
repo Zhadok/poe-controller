@@ -121,7 +121,7 @@ public class ConfigMappingUI implements Loggable, ControllerEventListener {
 		}
 		
 		frame = new JFrame();
-		frame.setTitle("poe-controller");
+		frame.setTitle("poe-controller (v" + Util.getPomVersion() + ")");
 		frame.setFocusTraversalKeysEnabled(false); // Otherwise "Tab" does not get picked up when listening
 		
 		frame.getContentPane().setBackground(COLOR_PANEL_BACKGROUND); 
@@ -136,7 +136,9 @@ public class ConfigMappingUI implements Loggable, ControllerEventListener {
 		
 		frame.setBounds(paddingX, paddingY, frameWidth, frameHeight);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
+		frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+		
+		
 		labelListeningStatus = new JLabel("Listening status");
 		labelListeningStatus.setHorizontalAlignment(SwingConstants.CENTER);
 		labelListeningStatus.setFont(new Font("Tahoma", Font.PLAIN, 22));
