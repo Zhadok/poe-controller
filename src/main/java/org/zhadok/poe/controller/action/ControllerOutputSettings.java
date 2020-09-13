@@ -1,4 +1,4 @@
-package org.zhadok.poe.controller;
+package org.zhadok.poe.controller.action;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.zhadok.poe.controller.App;
+import org.zhadok.poe.controller.Constants;
 import org.zhadok.poe.controller.config.ConfigManager;
 import org.zhadok.poe.controller.config.pojo.Config;
 import org.zhadok.poe.controller.config.pojo.Mapping;
@@ -16,7 +18,7 @@ import org.zhadok.poe.controller.util.Loggable;
 import net.java.games.input.Event;
 
 
-public class ControllerSettings implements Loggable {
+public class ControllerOutputSettings implements Loggable {
 	
 	/**
 	 * Poll interval (in ms) for right stick (mouse movement)
@@ -41,7 +43,7 @@ public class ControllerSettings implements Loggable {
 	private Map<MappingKey, Mapping> buttonMappings; 
 	
 	
-	public ControllerSettings() {
+	public ControllerOutputSettings() {
 		this.init();
 	}
 

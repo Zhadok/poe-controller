@@ -1,12 +1,11 @@
-package org.zhadok.poe.controller;
+package org.zhadok.poe.controller.action;
 
 import java.awt.AWTException;
 import java.awt.Robot;
 import java.util.List;
 
-import org.zhadok.poe.controller.action.ActionHandlerKey;
-import org.zhadok.poe.controller.action.ActionHandlerMacro;
-import org.zhadok.poe.controller.action.ActionHandlerMouse;
+import org.zhadok.poe.controller.App;
+import org.zhadok.poe.controller.ControllerEventListener;
 import org.zhadok.poe.controller.config.pojo.Mapping;
 import org.zhadok.poe.controller.config.pojo.MappingKey;
 import org.zhadok.poe.controller.util.Loggable;
@@ -14,7 +13,7 @@ import org.zhadok.poe.controller.util.Loggable;
 import net.java.games.input.Event;
 
 
-public class ControllerMapping implements Loggable, ControllerEventListener {
+public class ControllerOutputMapper implements Loggable, ControllerEventListener {
 	
 	public int getVerbosity() {
 		return App.verbosity;
@@ -22,13 +21,13 @@ public class ControllerMapping implements Loggable, ControllerEventListener {
 	
 	public final Robot robot; 
 
-	public final ControllerSettings settings; 
+	public final ControllerOutputSettings settings; 
 	
 	public final ActionHandlerKey actionHandlerKey; 
 	public final ActionHandlerMouse actionHandlerMouse; 
 	public final ActionHandlerMacro actionHandlerMacro; 
 	
-	public ControllerMapping() {
+	public ControllerOutputMapper() {
 		log(1, "Initializing ControllerMapping...");
 		try {
 			this.robot = new Robot();
@@ -37,7 +36,7 @@ public class ControllerMapping implements Loggable, ControllerEventListener {
 			throw new RuntimeException("Unable to initialize java.awt.Robot");
 		} 
 		
-		this.settings = new ControllerSettings(); 
+		this.settings = new ControllerOutputSettings(); 
 		
 		this.actionHandlerKey = new ActionHandlerKey(robot); 
 		this.actionHandlerMouse = new ActionHandlerMouse(robot); 

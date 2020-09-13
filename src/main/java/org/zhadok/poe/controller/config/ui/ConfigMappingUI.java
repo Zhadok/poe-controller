@@ -14,7 +14,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import javax.swing.BoxLayout;
@@ -34,7 +33,9 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import org.zhadok.poe.controller.App;
+import org.zhadok.poe.controller.ControllerEventHandler;
 import org.zhadok.poe.controller.ControllerEventListener;
+import org.zhadok.poe.controller.TemporaryControllerEventListener;
 import org.zhadok.poe.controller.action.macro.MacroName;
 import org.zhadok.poe.controller.config.ConfigManager;
 import org.zhadok.poe.controller.config.pojo.Config;
@@ -50,20 +51,20 @@ import net.java.games.input.Event;
 
 public class ConfigMappingUI implements Loggable, ControllerEventListener {
 
-	private JLabel labelListeningStatus;
 
 	@Override
 	public int getVerbosity() {
 		return App.verbosity;
 	}
 
-	private JFrame frame;
-	private final App app;
-
+	private final ControllerEventHandler controllerEventHandler;
 	private Config configCopy;
 	private LimitedSizeQueue<StringBuilder> eventLog = new LimitedSizeQueue<StringBuilder>(4);
 	private Map<Mapping, MappingRow> mapMappingToElement = new HashMap<>();
 
+
+	private JFrame frame;
+	private JLabel labelListeningStatus;
 	private JPanel panelMappings;
 	private JScrollPane scrollPaneMappings;
 	private JPanel panelBottom;
@@ -103,8 +104,8 @@ public class ConfigMappingUI implements Loggable, ControllerEventListener {
 	/**
 	 * Create the application.
 	 */
-	public ConfigMappingUI(App app) {
-		this.app = app;
+	public ConfigMappingUI(ControllerEventHandler controllerEventHandler) {
+		this.controllerEventHandler = controllerEventHandler;
 		this.loadConfigCopy();
 	}
 
@@ -402,11 +403,12 @@ public class ConfigMappingUI implements Loggable, ControllerEventListener {
 		Map<Component.Identifier.Axis,Integer> mapIdentifierNumberEvents = new HashMap<>(); 
 		
 		final int nEventsToRecord = 100; 
-		AtomicInteger nEventsRecorded = new AtomicInteger(0); 
-		app.setEventsToBeSkipped(1);
-		app.registerForNextEvents(nEventsToRecord, false, true, (inputEvent) -> {
+		controllerEventHandler.registerTemporaryListener(new TemporaryControllerEventListener(1, nEventsToRecord, false,
+				(inputEvent, nEventsRecorded, isFinished) -> {
+					
 			log(2, "Received next event: " + inputEvent + " (analog=" + inputEvent.getComponent().isAnalog() + ")");
 			log(2, inputEvent.getComponent().getIdentifier().getClass().getName());
+					
 			// inputEvent.getComponent().getName() ==> Returns "X Axis", "X Achse", "X-Axis", "X Rotation"
 			// inputEvent.getComponent().getIdentifier() can check if instanceof Axis, and name of identifier is better
 			if (inputEvent.getComponent().getIdentifier() instanceof Component.Identifier.Axis &&
@@ -416,8 +418,9 @@ public class ConfigMappingUI implements Loggable, ControllerEventListener {
 				
 				mapIdentifierToComponentName.put(axis, inputEvent.getComponent().getName()); 
 				mapIdentifierNumberEvents.compute(axis, (k, v) -> (v == null) ? 1 : v+1); 
-			}
-			if (nEventsRecorded.incrementAndGet() >= nEventsToRecord) {
+			}		
+			
+			if (isFinished) {
 				// Remove "dirty" events that were only recorded up to N times
 				// For example, Stadia controller gives one "rz" event when starting the application
 				List<Axis> axesToRemove = mapIdentifierNumberEvents.entrySet().stream()
@@ -440,11 +443,11 @@ public class ConfigMappingUI implements Loggable, ControllerEventListener {
 					return; 
 				}
 				onMapMovementEventsRecorded(macroName, mapIdentifierToComponentName); 
+			} else {
+				setStatusText((nEventsToRecord - nEventsRecorded) + " events remaining, keep moving the joystick...");
 			}
-			else {
-				setStatusText((nEventsToRecord - nEventsRecorded.get()) + " events remaining, keep moving the joystick...");
-			}
-		});
+					
+		}));
 	}
 	
 	private void onMapMovementEventsRecorded(MacroName macroName, Map<Axis,String> mapIdentifierToComponentName) {
@@ -567,7 +570,7 @@ public class ConfigMappingUI implements Loggable, ControllerEventListener {
 		ConfigManager.getInstance().saveConfig(this.configCopy);
 		ConfigManager.getInstance().resetLoadedConfig();
 		setStatusText("Config saved. New mapping activated");
-		app.resetControllerMappingListener();
+		controllerEventHandler.resetControllerMappingListener();
 	}
 
 	/**
@@ -601,8 +604,9 @@ public class ConfigMappingUI implements Loggable, ControllerEventListener {
 					log(1, "Registering for next event...");
 					setStatusText("Listening for next input event...");
 					List<Event> inputEvents = new ArrayList<>(); 
-					//app.setEventsToBeSkipped(1);
-					app.registerForNextEvents(nEvents, true, false, (inputEvent) -> {
+					controllerEventHandler.registerTemporaryListener(new TemporaryControllerEventListener(0, nEvents, true, 
+							(inputEvent, nEventsRecorded, isFinished) -> {
+								
 						log(1, "Received next event: " + inputEvent + " (analog=" + inputEvent.getComponent().isAnalog()
 								+ ")");
 						setStatusText("Received event: " + inputEvent.toString());
@@ -616,7 +620,7 @@ public class ConfigMappingUI implements Loggable, ControllerEventListener {
 							}
 							enableAllMappingButtons();
 						}
-					});
+					}));
 				}
 			}
 		}
