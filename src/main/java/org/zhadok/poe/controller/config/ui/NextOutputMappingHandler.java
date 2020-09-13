@@ -7,6 +7,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.util.function.Consumer;
 
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
@@ -43,11 +44,17 @@ public class NextOutputMappingHandler implements KeyListener, Loggable, AWTEvent
 		// Event and component that received that event
 		MouseEvent mouseEvent = (MouseEvent) event;
 		java.awt.Component c = mouseEvent.getComponent();
-
+		
 		// Ignoring mouse events from any other frame
 		if (SwingUtilities.getWindowAncestor(c) == parentFrame) {
 			if (event.getID() == MouseEvent.MOUSE_RELEASED) {
-				//System.out.println("Mouse released on " + c.getClass().getCanonicalName());
+				// If button is cancel button don't fire event
+				if (mouseEvent.getSource() instanceof JButton) {
+					if (ConfigMappingUiTop.TEXT_CANCEL.equals(((JButton) mouseEvent.getSource()).getText())) {
+						this.onFinish(null);
+						return; 
+					}
+				}
 				this.onMouseClicked(mouseEvent);
 			}
 		}

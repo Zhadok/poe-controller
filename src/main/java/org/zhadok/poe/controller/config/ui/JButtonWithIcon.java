@@ -1,6 +1,7 @@
 package org.zhadok.poe.controller.config.ui;
 
 import java.awt.Font;
+import java.util.Arrays;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -59,6 +60,12 @@ public class JButtonWithIcon extends JButton implements Loggable {
 	@Override
 	public int getVerbosity() {
 		return App.verbosity;
+	}
+	
+	public void removeAllActionListeners() {
+		Arrays.stream(this.getActionListeners()).forEach(listener -> {
+			this.removeActionListener(listener); 
+		});
 	}
 	
 }

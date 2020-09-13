@@ -54,6 +54,10 @@ public class ControllerEventHandler implements Loggable {
 		this.temporaryEventListener = listener; 
 	}	
 	
+	public void unregisterTemporaryListener() {
+		this.temporaryEventListener = null;
+	}
+	
 	public void startPolling() {
 		if (this.isPolling == true) {
 			return; 
@@ -107,7 +111,8 @@ public class ControllerEventHandler implements Loggable {
 	}
 	
 	public boolean isEventMouseMovement(Event event) {
-		return "net.java.games.input.RawMouse$Axis".equals(event.getComponent().getClass().getName()); 
+		return "net.java.games.input.RawMouse$Axis".equals(event.getComponent().getClass().getName()) || 
+			   "net.java.games.input.RawMouse$Button".equals(event.getComponent().getClass().getName()); 
 	}
 	
 	private void handleEvent(Event event) {
@@ -152,7 +157,7 @@ public class ControllerEventHandler implements Loggable {
 			// Only notify that listener
 			this.temporaryEventListener.handleEvent(event);
 			
-			if (this.temporaryEventListener.hasReceivedAllEvents()) {
+			if (this.temporaryEventListener != null && this.temporaryEventListener.hasReceivedAllEvents()) {
 				this.temporaryEventListener = null;
 			}
 		} else {

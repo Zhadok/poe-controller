@@ -35,12 +35,12 @@ public class MappingRow extends JPanel {
 			ActionListener startMappingOutputListener,
 			ActionListener deleteListener) {
 		super(new FlowLayout(FlowLayout.LEFT));
-		this.setBackground(ConfigMappingUI.COLOR_PANEL_BACKGROUND);
+		this.setBackground(ConfigMappingUi.COLOR_PANEL_BACKGROUND);
 		this.mapping = mapping;
 		
 		int textInputWidth = 150; 
 		int textOutputWidth = 250; 
-		int textPadding = ConfigMappingUI.TEXT_PADDING; 
+		int textPadding = ConfigMappingUi.TEXT_PADDING; 
 		
 		buttonStartMappingInput = new JButtonWithIcon("/img/icon-controller.png", "Map input", textPadding);
 		buttonStartMappingInput.addChangeListener(startMappingInputListener);

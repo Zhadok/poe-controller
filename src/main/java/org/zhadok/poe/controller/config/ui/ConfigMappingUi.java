@@ -8,6 +8,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -49,7 +50,7 @@ import net.java.games.input.Component;
 import net.java.games.input.Component.Identifier.Axis;
 import net.java.games.input.Event;
 
-public class ConfigMappingUI implements Loggable, ControllerEventListener {
+public class ConfigMappingUi implements Loggable, ControllerEventListener {
 
 
 	@Override
@@ -62,9 +63,7 @@ public class ConfigMappingUI implements Loggable, ControllerEventListener {
 	private LimitedSizeQueue<StringBuilder> eventLog = new LimitedSizeQueue<StringBuilder>(4);
 	private Map<Mapping, MappingRow> mapMappingToElement = new HashMap<>();
 
-
 	private JFrame frame;
-	private JLabel labelListeningStatus;
 	private JPanel panelMappings;
 	private JScrollPane scrollPaneMappings;
 	private JPanel panelBottom;
@@ -99,12 +98,12 @@ public class ConfigMappingUI implements Loggable, ControllerEventListener {
 	public static final Color COLOR_BUTTON_BACKGROUND = new Color(240, 250, 255);
 	public static final int TEXT_PADDING = 7; 
 	public static final Font FONT_BIG_BUTTONS = new Font("Tahoma", Font.PLAIN, 22);
-	
+	private ConfigMappingUiTop panelTop;
 	
 	/**
 	 * Create the application.
 	 */
-	public ConfigMappingUI(ControllerEventHandler controllerEventHandler) {
+	public ConfigMappingUi(ControllerEventHandler controllerEventHandler) {
 		this.controllerEventHandler = controllerEventHandler;
 		this.loadConfigCopy();
 	}
@@ -138,12 +137,6 @@ public class ConfigMappingUI implements Loggable, ControllerEventListener {
 		frame.setBounds(paddingX, paddingY, frameWidth, frameHeight);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-		
-		
-		labelListeningStatus = new JLabel("Listening status");
-		labelListeningStatus.setHorizontalAlignment(SwingConstants.CENTER);
-		labelListeningStatus.setFont(new Font("Tahoma", Font.PLAIN, 22));
-		frame.getContentPane().add(labelListeningStatus, BorderLayout.NORTH);
 
 		panelMappings = new JPanel();
 		panelMappings.setBackground(COLOR_PANEL_BACKGROUND);
@@ -323,6 +316,9 @@ public class ConfigMappingUI implements Loggable, ControllerEventListener {
 		
 		panelMouseMovementStickThreshold.add(textFieldMouseMovementStickThreshold, BorderLayout.EAST);
 		
+		panelTop = new ConfigMappingUiTop(); 
+		frame.getContentPane().add(panelTop, BorderLayout.NORTH);
+		
 		this.resetConfigElements();
 		
 		frame.setVisible(true);
@@ -342,7 +338,7 @@ public class ConfigMappingUI implements Loggable, ControllerEventListener {
 	}
 
 	private void addConfigMappingElement(Mapping mapping, int mappingIndex) {
-			MappingRow panelMapping = new MappingRow(mapping, new NextInputMappingHandler(mapping),
+			MappingRow panelMapping = new MappingRow(mapping, new NextControllerMappingHandler(mapping, 2),
 					(event) -> startOutputListener(mapping),
 					(deleteEvent) -> removeConfigMapping(mapping));
 	
@@ -378,7 +374,7 @@ public class ConfigMappingUI implements Loggable, ControllerEventListener {
 				mapMappingToElement.get(mapping).updateTexts();
 				setStatusText("Changed mapping action: " + mapping.getAction().toStringUI());
 			} else {
-				setStatusText("Unable to record mapping action."); 
+				setStatusText("Unable to record mapping action or recording was canceled."); 
 			}
 			Toolkit.getDefaultToolkit().removeAWTEventListener(handler);
 			frame.removeKeyListener(handler);
@@ -506,7 +502,7 @@ public class ConfigMappingUI implements Loggable, ControllerEventListener {
 	}
 
 	private void setStatusText(String text) {
-		labelListeningStatus.setText(text);
+		panelTop.setStatusText(text);
 	}
 
 	private void setLastInputDetectedText(Event event) {
@@ -546,6 +542,8 @@ public class ConfigMappingUI implements Loggable, ControllerEventListener {
 				removeConfigMappingElement(mapping);
 			});
 			this.configCopy.getMapping().clear();
+			this.frame.getContentPane().revalidate();
+			this.frame.getContentPane().repaint();
 		}
 	}
 	
@@ -575,8 +573,9 @@ public class ConfigMappingUI implements Loggable, ControllerEventListener {
 
 	/**
 	 * Use to record the next digital (non-analog) controller input
+	 * Example: Button 1, Button 2
 	 */
-	private abstract class NextControllerMappingHandler implements ChangeListener {
+	private class NextControllerMappingHandler implements ChangeListener {
 		private boolean buttonPressed = false; // holds the last pressed state of the button
 		protected final Mapping mapping;
 		private final int nEvents; 
@@ -612,7 +611,7 @@ public class ConfigMappingUI implements Loggable, ControllerEventListener {
 						setStatusText("Received event: " + inputEvent.toString());
 						inputEvents.add(inputEvent); 
 						
-						if (inputEvents.size() >= nEvents) {
+						if (isFinished) {
 							onInputEventsReceived(inputEvents);
 
 							if (mapMappingToElement.get(mapping) != null) {
@@ -624,17 +623,7 @@ public class ConfigMappingUI implements Loggable, ControllerEventListener {
 				}
 			}
 		}
-
-		public abstract void onInputEventsReceived(List<Event> events);
-	}
-
-	public class NextInputMappingHandler extends NextControllerMappingHandler {
-
-		public NextInputMappingHandler(Mapping mapping) {
-			super(mapping, 2);
-		}
-
-		@Override
+		
 		public void onInputEventsReceived(List<Event> events) {
 			// Pick the first event which has a value > 0 
 			// On some machines, the first event is left mouse button released (==> value 0) 
@@ -648,11 +637,13 @@ public class ConfigMappingUI implements Loggable, ControllerEventListener {
 		}
 	}
 
+
 	private void enableAllMappingButtons() {
 		this.mapMappingToElement.forEach((mapping, mappingRow) -> mappingRow.setButtonsEnabled(true));
 		this.buttonAddNewMapping.setEnabled(true); 
 		this.buttonMapCharacterMovement.setEnabled(true);
 		this.buttonMapMouseMovement.setEnabled(true);
+		this.panelTop.hideCancelButton();
 		
 		this.validateConfig(); 
 	}
@@ -662,8 +653,15 @@ public class ConfigMappingUI implements Loggable, ControllerEventListener {
 		this.buttonAddNewMapping.setEnabled(false); 
 		this.buttonMapCharacterMovement.setEnabled(false);
 		this.buttonMapMouseMovement.setEnabled(false);
+		this.panelTop.showCancelButton(event -> onCancelListen(event)); 
 	}
 	
+	private void onCancelListen(ActionEvent event) {
+		log(1, "Cancelling listen for next input/output.");
+		this.enableAllMappingButtons();
+		this.controllerEventHandler.unregisterTemporaryListener();
+	}
+
 	private void validateConfig() {
 		try {
 			this.configCopy.sanityCheckMapping();

@@ -3,7 +3,7 @@ import java.awt.AWTException;
 import java.io.File;
 import java.io.IOException;
 
-import org.zhadok.poe.controller.config.ui.ConfigMappingUI;
+import org.zhadok.poe.controller.config.ui.ConfigMappingUi;
 import org.zhadok.poe.controller.lib.JInputLib;
 import org.zhadok.poe.controller.util.Loggable;
 import org.zhadok.poe.controller.util.Util;
@@ -35,8 +35,8 @@ public class App implements Loggable {
 	}
 	
 	
-	private static ConfigMappingUI startConfigMappingUI(ControllerEventHandler eventHandler) {
-		ConfigMappingUI window = new ConfigMappingUI(eventHandler);
+	private static ConfigMappingUi startConfigMappingUI(ControllerEventHandler eventHandler) {
+		ConfigMappingUi window = new ConfigMappingUi(eventHandler);
 		java.awt.EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
@@ -72,7 +72,7 @@ public class App implements Loggable {
 			eventHandler.log(0, "Setting verbosity to " + verbosity + " (default value)");
 		}
 		eventHandler.resetControllerMappingListener();
-		ConfigMappingUI window = startConfigMappingUI(eventHandler); 
+		ConfigMappingUi window = startConfigMappingUI(eventHandler); 
 		eventHandler.registerEventListener(window);
 		
 		if (Util.isJava32Bit()) {
