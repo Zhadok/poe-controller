@@ -12,21 +12,20 @@ import org.zhadok.poe.controller.util.Loggable;
 
 import net.java.games.input.Event;
 
-
 public class ControllerOutputMapper implements Loggable, ControllerEventListener {
-	
+
 	public int getVerbosity() {
 		return App.verbosity;
 	}
-	
-	public final Robot robot; 
 
-	public final ControllerOutputSettings settings; 
-	
-	public final ActionHandlerKey actionHandlerKey; 
-	public final ActionHandlerMouse actionHandlerMouse; 
-	public final ActionHandlerMacro actionHandlerMacro; 
-	
+	public final Robot robot;
+
+	public final ControllerOutputSettings settings;
+
+	public final ActionHandlerKey actionHandlerKey;
+	public final ActionHandlerMouse actionHandlerMouse;
+	public final ActionHandlerMacro actionHandlerMacro;
+
 	public ControllerOutputMapper() {
 		log(1, "Initializing ControllerMapping...");
 		try {
@@ -34,52 +33,67 @@ public class ControllerOutputMapper implements Loggable, ControllerEventListener
 		} catch (AWTException e) {
 			e.printStackTrace();
 			throw new RuntimeException("Unable to initialize java.awt.Robot");
-		} 
-		
-		this.settings = new ControllerOutputSettings(); 
-		
-		this.actionHandlerKey = new ActionHandlerKey(robot); 
-		this.actionHandlerMouse = new ActionHandlerMouse(robot); 
-		this.actionHandlerMacro = new ActionHandlerMacro(robot, this.actionHandlerKey, this.actionHandlerMouse); 
-		
-		//LogWatcher.getInstance().watchNonBlocking(LogWatcher.pathToPoELogDir);
-		//LogWatcher.getInstance().addTestLines(); 
-		
-		//TradeUI.launchInNewThread();
-		//TradeUI.launchAsNewJavaFX();
+		}
+
+		this.settings = new ControllerOutputSettings();
+
+		this.actionHandlerKey = new ActionHandlerKey(robot);
+		this.actionHandlerMouse = new ActionHandlerMouse(robot);
+		this.actionHandlerMacro = new ActionHandlerMacro(robot, this.actionHandlerKey, this.actionHandlerMouse);
+
+		// LogWatcher.getInstance().watchNonBlocking(LogWatcher.pathToPoELogDir);
+		// LogWatcher.getInstance().addTestLines();
+
+		// TradeUI.launchInNewThread();
+		// TradeUI.launchAsNewJavaFX();
+		this.activateShutdownHook();
 	}
 
 	public void handleEvent(Event event) {
-		MappingKey mappingKey = new MappingKey(event); 
+		MappingKey mappingKey = new MappingKey(event);
 		log(3, "Handling event with " + mappingKey.toString());
-		
-		List<Mapping> relevantMappings = settings.getRelevantMappings(mappingKey, event); 
+
+		List<Mapping> relevantMappings = settings.getRelevantMappings(mappingKey, event);
 		relevantMappings.forEach(mapping -> {
 			if (mapping.hasAction() == false) {
-				log(1, "No config action assigned to mapping: " + mapping.toString()); 
+				log(1, "No config action assigned to mapping: " + mapping.toString());
 				return;
 			}
 			this.handleEvent(event, mapping);
 		});
 		if (relevantMappings.isEmpty()) {
-			log(3, "No mapping found for " + mappingKey.toString()); 
+			log(3, "No mapping found for " + mappingKey.toString());
 		}
 	}
 
 	private void handleEvent(Event event, Mapping mapping) {
 		if (mapping.getAction().hasKey()) {
 			actionHandlerKey.handleAction(event, mapping);
-		}
-		else if (mapping.getAction().hasMouseAction()) {
+		} else if (mapping.getAction().hasMouseAction()) {
 			actionHandlerMouse.handleAction(event, mapping);
-		}
-		else if (mapping.getAction().hasMacro()) {
+		} else if (mapping.getAction().hasMacro()) {
 			actionHandlerMacro.handleAction(event, mapping);
-		}
-		else {
-			throw new RuntimeException("Action has no assigned key, mouse or macro: " + mapping.getAction().toString()); 
+		} else {
+			throw new RuntimeException("Action has no assigned key, mouse or macro: " + mapping.getAction().toString());
 		}
 	}
-	
-	
+
+	private void activateShutdownHook() {
+		Runtime.getRuntime().addShutdownHook(new Thread() {
+			public void run() {
+//				log(1, "Activating shutdown hook: Releasing all registered keys and mouse buttons..."); 
+//				
+//				log(1, "Finished shutdown hook."); 
+			}
+		});
+	}
+
+	@Override
+	public void handleApplicationExit() {
+		log(1, "Handling application exit..."); 
+		actionHandlerKey.releaseAllKeys(); 
+		actionHandlerMouse.releaseAllButtons(); 
+		log(1, "Finishing handling application exit."); 
+	}
+
 }

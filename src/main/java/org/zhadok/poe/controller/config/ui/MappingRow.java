@@ -69,9 +69,8 @@ public class MappingRow extends JPanel {
 		this.updateTexts();
 		
 		this.add(buttonStartMappingInput);
-		this.add(buttonStartMappingOutput);
-		// this.add(buttonAssignMacroOutput); 
 		this.add(textInput);
+		this.add(buttonStartMappingOutput);
 		this.add(textOutput);
 		this.add(buttonDeleteMapping);
 	}

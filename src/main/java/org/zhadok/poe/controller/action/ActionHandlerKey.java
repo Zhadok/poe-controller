@@ -2,6 +2,8 @@ package org.zhadok.poe.controller.action;
 
 import java.awt.Robot;
 import java.awt.event.KeyEvent;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 import org.zhadok.poe.controller.config.pojo.ConfigAction;
@@ -12,11 +14,13 @@ import net.java.games.input.Event;
 public class ActionHandlerKey extends ActionHandler {
 	
 	private Random random; 
+	private Map<Integer, Integer> keysPressed; 
 	
 	public ActionHandlerKey(Robot robot) {
 		super(robot);
 		log(1, "Initializing ActionHandlerKey..."); 
 		this.random = new Random(); 
+		this.keysPressed = new HashMap<>(); 
 	}
 
 
@@ -30,10 +34,10 @@ public class ActionHandlerKey extends ActionHandler {
 		
 		if (isDigitalButton && isPressed) {
 			log(2, "Pressing action=" + mapping.getAction().toString()); 
-			robot.keyPress(keycode);
+			keyPress(keycode);
 		} else if (isDigitalButton && !isPressed) {
 			log(2, "Releasing keycode=" + keycode); 
-			robot.keyRelease(keycode);
+			keyRelease(keycode);
 		}	
 	}
 
@@ -51,9 +55,9 @@ public class ActionHandlerKey extends ActionHandler {
 			return; 
 		
 		log(2, "Pressing and releasing keyEventCode: " + keyEventCode); 
-		robot.keyPress(keyEventCode);
+		keyPress(keyEventCode);
 		robot.delay(getDelayAfterKeyPress());
-		robot.keyRelease(keyEventCode);
+		keyRelease(keyEventCode);
 		robot.delay(getDelayAfterKeyPress());
 	}
 	
@@ -76,9 +80,9 @@ public class ActionHandlerKey extends ActionHandler {
 	            throw new RuntimeException(
 	                "Key code not found for character '" + c + "'");
 	        }
-	        robot.keyPress(keyCode);
+	        keyPress(keyCode);
 	        robot.delay(getDelayAfterKeyPress());
-	        robot.keyRelease(keyCode);
+	        keyRelease(keyCode);
 	        robot.delay(getDelayAfterKeyPress());
 	    }
 	}
@@ -105,12 +109,12 @@ public class ActionHandlerKey extends ActionHandler {
 		this.pressAndReleaseKey(KeyEvent.VK_TAB);
 		this.releaseAlt();
 		*/
-		robot.keyPress(KeyEvent.VK_CONTROL);
-		robot.keyPress(KeyEvent.VK_ALT);
-		robot.keyPress(KeyEvent.VK_TAB);
-		robot.keyRelease(KeyEvent.VK_TAB);
-		robot.keyRelease(KeyEvent.VK_ALT);
-		robot.keyRelease(KeyEvent.VK_CONTROL);
+		keyPress(KeyEvent.VK_CONTROL);
+		keyPress(KeyEvent.VK_ALT);
+		keyPress(KeyEvent.VK_TAB);
+		keyRelease(KeyEvent.VK_TAB);
+		keyRelease(KeyEvent.VK_ALT);
+		keyRelease(KeyEvent.VK_CONTROL);
 		
 		this.pressAndReleaseKey(KeyEvent.VK_ENTER);
 		
@@ -125,33 +129,47 @@ public class ActionHandlerKey extends ActionHandler {
 	
 	public void pressControl() {
 		log(2, "Pressing control..."); 
-		robot.keyPress(KeyEvent.VK_CONTROL);
+		keyPress(KeyEvent.VK_CONTROL);
 		robot.delay(getDelayAfterKeyPress());
 	}
 	public void releaseControl() {
 		log(2, "Releasing control..."); 
-		robot.keyRelease(KeyEvent.VK_CONTROL);
+		keyRelease(KeyEvent.VK_CONTROL);
 		robot.delay(getDelayAfterKeyPress());
 	}
 	
 	public void pressAlt() {
-		robot.keyPress(KeyEvent.VK_ALT);
+		keyPress(KeyEvent.VK_ALT);
 		robot.delay(getDelayAfterKeyPress());
 	}
 	public void releaseAlt() {
-		robot.keyRelease(KeyEvent.VK_ALT);
+		keyRelease(KeyEvent.VK_ALT);
 		robot.delay(getDelayAfterKeyPress());
 	}
 
 	public void pressShift() {
-		robot.keyPress(KeyEvent.VK_SHIFT);
+		keyPress(KeyEvent.VK_SHIFT); 
 		robot.delay(getDelayAfterKeyPress());
 	}
 	public void releaseShift() {
-		robot.keyRelease(KeyEvent.VK_SHIFT);
+		keyRelease(KeyEvent.VK_SHIFT); 
 		robot.delay(getDelayAfterKeyPress());
 	}
-	
-	
+
+	private void keyPress(int keycode) {
+		robot.keyPress(keycode);
+		keysPressed.put(keycode, 0); 
+	}
+	private void keyRelease(int keycode) {
+		robot.keyRelease(keycode);
+		keysPressed.remove(keycode);
+	}
+
+	public void releaseAllKeys() {
+		this.keysPressed.keySet().forEach(keycode -> {
+			log(1, "Releasing key: " + keycode); 
+			robot.keyRelease(keycode); 
+		});
+	}
 	
 }

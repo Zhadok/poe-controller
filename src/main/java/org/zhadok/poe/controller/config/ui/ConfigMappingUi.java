@@ -11,6 +11,8 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -140,7 +142,6 @@ public class ConfigMappingUi implements Loggable, ControllerEventListener {
 		
 		frame.setBounds(uiSettings.getUiX(), uiSettings.getUiY(), uiSettings.getUiWidth(), uiSettings.getUiHeight());
 		frame.setExtendedState(uiSettings.getUiExtendedState());
-
 		frame.addComponentListener(new ComponentAdapter() {
 			public void componentResized(ComponentEvent componentEvent) {
 				onResize(componentEvent); 
@@ -149,6 +150,11 @@ public class ConfigMappingUi implements Loggable, ControllerEventListener {
 				onResize(componentEvent); 
 			}
 		}); 
+	    frame.addWindowListener(new WindowAdapter() {
+	        public void windowClosing(WindowEvent winEvt) {
+	        	controllerEventHandler.triggerApplicationExit();
+	        }
+	    });
 		
 		panelMappings = new JPanel();
 		panelMappings.setBackground(COLOR_PANEL_BACKGROUND);
@@ -707,5 +713,8 @@ public class ConfigMappingUi implements Loggable, ControllerEventListener {
 	public void handleEvent(Event event) {
 		this.setLastInputDetectedText(event);
 	}
+
+	@Override
+	public void handleApplicationExit() {}
 
 }

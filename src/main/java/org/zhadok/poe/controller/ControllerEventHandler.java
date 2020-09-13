@@ -47,6 +47,12 @@ public class ControllerEventHandler implements Loggable {
 		this.registerEventListener(new ControllerOutputMapper());
 	}
 	
+	public void triggerApplicationExit() {
+		this.controllerEventListeners.forEach(listener -> {
+			listener.handleApplicationExit();
+		});
+	}
+	
 	/**
 	 * For the next n events, only this listener will be called
 	 */

@@ -2,6 +2,8 @@
 - 0.0.16
     - Add cancel button while listening for next controller input/output
     - App window remembers resizing between restarts
+    - Mouse left press and mouse left release more actively in case there are other event sources
+    - Release any held keys & buttons on application exit
 - 0.0.14
     - Add poe-controller version to application title
     - Change default start method via .jar (not .cmd)

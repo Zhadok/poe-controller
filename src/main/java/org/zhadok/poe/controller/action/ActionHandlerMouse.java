@@ -11,9 +11,6 @@ import net.java.games.input.Event;
 
 public class ActionHandlerMouse extends ActionHandler {
 
-	private boolean isMouseRightPressed = false;
-	private boolean isMouseMiddlePressed = false; 
-	
 	private Random random; 
 	boolean haveNextNextGaussian = false;
 	double nextNextGaussian;  
@@ -24,7 +21,6 @@ public class ActionHandlerMouse extends ActionHandler {
 		this.random = new Random(); 
 	}
 
-	
 	@Override
 	public void handleAction(Event event, Mapping mapping) {
 		log(3, "Handling event with mapping=" + mapping.toString()); 
@@ -116,16 +112,14 @@ public class ActionHandlerMouse extends ActionHandler {
 	}
 	
 	public void mouseRightPress() {
-		if (this.isMouseRightPressed == false && !this.isInterrupted()) {
-			this.isMouseRightPressed = true;
+		if (!this.isInterrupted()) {
 			robot.mousePress(InputEvent.BUTTON3_MASK);
 			log(2, "Mouse right press"); 
 		}
 	}
 	
 	public void mouseRightRelease() {
-		if (this.isMouseRightPressed == true && !this.isInterrupted()) {
-			this.isMouseRightPressed = false; 
+		if (!this.isInterrupted()) {
 			this.robot.mouseRelease(InputEvent.BUTTON3_MASK);
 			log(2, "Mouse right release"); 
 		}
@@ -139,19 +133,24 @@ public class ActionHandlerMouse extends ActionHandler {
 	}
 	
 	private void mouseMiddlePress() {
-		if (this.isMouseMiddlePressed == false && !this.isInterrupted()) {
-			this.isMouseMiddlePressed = true;
+		if (!this.isInterrupted()) {
 			robot.mousePress(InputEvent.BUTTON2_MASK);
 			log(2, "Mouse middle press"); 
 		}
 	}
 	
 	private void mouseMiddleRelease() {
-		if (this.isMouseMiddlePressed == true && !this.isInterrupted()) {
-			this.isMouseMiddlePressed = false; 
+		if (!this.isInterrupted()) {
 			this.robot.mouseRelease(InputEvent.BUTTON2_MASK);
 			log(2, "Mouse middle release"); 
 		}
+	}
+
+
+	public void releaseAllButtons() {
+		this.mouseLeftRelease();
+		this.mouseMiddleRelease();
+		this.mouseRightRelease();
 	}
 	
 }

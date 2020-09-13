@@ -6,4 +6,6 @@ public interface ControllerEventListener {
 
 	void handleEvent(Event event);
 
+	void handleApplicationExit(); 
+	
 }
