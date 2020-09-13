@@ -13,13 +13,16 @@
 			<source>target/poe-controller-${version}.jar</source>
 		</file>
         <file>
-            <source>start-poe-controller.cmd</source>
+            <source>start-poe-controller-with-log.cmd</source>
         </file>
         <file>
             <source>LICENSE</source>
         </file>
         <file>
             <source>README.md</source>
+        </file>
+		<file>
+            <source>CHANGES.md</source>
         </file>
     </files>
 </assembly>
