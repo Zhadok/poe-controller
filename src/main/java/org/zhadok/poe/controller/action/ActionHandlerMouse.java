@@ -11,7 +11,6 @@ import net.java.games.input.Event;
 
 public class ActionHandlerMouse extends ActionHandler {
 
-	private boolean isMouseLeftPressed = false;
 	private boolean isMouseRightPressed = false;
 	private boolean isMouseMiddlePressed = false; 
 	
@@ -71,16 +70,14 @@ public class ActionHandlerMouse extends ActionHandler {
 	}
 	
 	public void mouseLeftPress() {
-		if (this.isMouseLeftPressed == false && !this.isInterrupted()) {
-			this.isMouseLeftPressed = true;
+		if (!this.isInterrupted()) {
 			robot.mousePress(InputEvent.BUTTON1_MASK);
 			log(2, "Mouse left press"); 
 		}
 	}
 	public void mouseLeftRelease() {
-		if (this.isMouseLeftPressed == true && !this.isInterrupted()) {
+		if (!this.isInterrupted()) {
 			this.robot.mouseRelease(InputEvent.BUTTON1_MASK);
-			this.isMouseLeftPressed = false; 
 			log(2, "Mouse left release"); 
 		}
 	}
