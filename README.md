@@ -34,7 +34,7 @@ Play Path of Exile with a controller!
 - Map controller buttons to keyboard keys and mouse clicks
 - Health: Reduce the risk of RSI by using a more ergonomic method of playing PoE! 
 
-Character movement:<br>Joystick moves mouse in<br> circle around character  |  Mouse movement: <br>Joystick moves mouse<br>arbitrarily | Controller button<br>is mapped to<br>mouse click | Controller button<br> is mapped to<br> keyboard
+Character movement:<br>One joystick moves mouse in<br> circle around character  |  Mouse movement: <br>The other joystick<br>moves mouse freely | Controller button<br>is mapped to<br>mouse click | Controller button<br> is mapped to<br> keyboard
 :-------------------------:|:-------------------------:|:-------------------------:|:-------------------------:
 <img src="docs/media/CharacterMovement.gif" width="150" height="150" /> | <img src="docs/media/MouseMovement.gif" width="150" height="150" /> | <img src="docs/media/MouseClick.gif" width="150" height="150" /> | <img src="docs/media/KeyboardOutput.gif" width="150" height="150" />
 
@@ -181,7 +181,12 @@ This is the mapping I play PoE with.
 
 Sample gameplay
 
-<img src="docs/media/gameplay-raw.gif" width="500" />
+
+
+
+Gameplay 1 | Gameplay 2
+:-------------------------:|:-------------------------:
+<img src="docs/media/gameplay-1.gif" width="400" /> | <img src="docs/media/gameplay-2.gif" width="400" />
 
 
 # License
