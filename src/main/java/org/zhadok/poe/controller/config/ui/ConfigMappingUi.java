@@ -9,6 +9,8 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -62,7 +64,8 @@ public class ConfigMappingUi implements Loggable, ControllerEventListener {
 	private Config configCopy;
 	private LimitedSizeQueue<StringBuilder> eventLog = new LimitedSizeQueue<StringBuilder>(4);
 	private Map<Mapping, MappingRow> mapMappingToElement = new HashMap<>();
-
+	private final ConfigMappingUiSettings uiSettings; 
+	
 	private JFrame frame;
 	private JPanel panelMappings;
 	private JScrollPane scrollPaneMappings;
@@ -104,9 +107,15 @@ public class ConfigMappingUi implements Loggable, ControllerEventListener {
 	 * Create the application.
 	 */
 	public ConfigMappingUi(ControllerEventHandler controllerEventHandler) {
+		this(controllerEventHandler, new ConfigMappingUiSettings()); 
+	}
+	
+	public ConfigMappingUi(ControllerEventHandler controllerEventHandler, ConfigMappingUiSettings uiSettings) {
 		this.controllerEventHandler = controllerEventHandler;
+		this.uiSettings = uiSettings; 
 		this.loadConfigCopy();
 	}
+	
 
 	/**
 	 * Initialize the contents of the frame.
@@ -123,21 +132,24 @@ public class ConfigMappingUi implements Loggable, ControllerEventListener {
 		frame = new JFrame();
 		frame.setTitle("poe-controller (v" + Util.getPomVersion() + ")");
 		frame.setFocusTraversalKeysEnabled(false); // Otherwise "Tab" does not get picked up when listening
-		
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setBackground(COLOR_PANEL_BACKGROUND); 
 		
 		URL iconUrl = getClass().getResource("/img/icon-controller.png"); 
 		frame.setIconImage(new ImageIcon(iconUrl).getImage());
 		
-		int frameHeight = (int) (0.90 * Util.getScreenSize().height);
-		int frameWidth = (int) (0.90 * Util.getScreenSize().width); 
-		int paddingX = (Util.getScreenSize().width - frameWidth) / 2; 
-		int paddingY = (Util.getScreenSize().height - frameHeight) / 2; 
-		
-		frame.setBounds(paddingX, paddingY, frameWidth, frameHeight);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+		frame.setBounds(uiSettings.getUiX(), uiSettings.getUiY(), uiSettings.getUiWidth(), uiSettings.getUiHeight());
+		frame.setExtendedState(uiSettings.getUiExtendedState());
 
+		frame.addComponentListener(new ComponentAdapter() {
+			public void componentResized(ComponentEvent componentEvent) {
+				onResize(componentEvent); 
+		    }
+			public void componentMoved(ComponentEvent componentEvent) {
+				onResize(componentEvent); 
+			}
+		}); 
+		
 		panelMappings = new JPanel();
 		panelMappings.setBackground(COLOR_PANEL_BACKGROUND);
 		JPanel panelMappingsContainer = new JPanel(new BorderLayout()); 
@@ -660,6 +672,18 @@ public class ConfigMappingUi implements Loggable, ControllerEventListener {
 		log(1, "Cancelling listen for next input/output.");
 		this.enableAllMappingButtons();
 		this.controllerEventHandler.unregisterTemporaryListener();
+	}
+	
+	private void onResize(ComponentEvent componentEvent) {
+		log(2, "Resizing frame and storing preferences: width=" + frame.getWidth() + ", height=" + 
+				frame.getHeight() + ", x=" + frame.getX() + ", y=" + frame.getY() + ", extended state=" + 
+				frame.getExtendedState()); 
+		
+		uiSettings.setUiWidth(frame.getWidth());
+		uiSettings.setUiHeight(frame.getHeight());
+		uiSettings.setUiX(frame.getX());
+		uiSettings.setUiY(frame.getY());
+		uiSettings.setUiExtendedState(frame.getExtendedState());
 	}
 
 	private void validateConfig() {
